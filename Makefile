@@ -1,6 +1,6 @@
-COMPONENT=TelosB_1
+COMPONENT=TinySmartAutomation
 # radio Channel emission
-CC2420_CHANNEL=24
+CC2420_CHANNEL=16
 # manage radio power emission
 CFlags = -DCC2420_DEF_RFPower= 3
 TINYOS_ROOT_DIR?=../..

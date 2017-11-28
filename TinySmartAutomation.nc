@@ -1,4 +1,4 @@
-configuration TelosB_1{
+configuration TinySmartAutomation{
 }
 implementation{
 	components MainC; // Main, needed to lauch app
