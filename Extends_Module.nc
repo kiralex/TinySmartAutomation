@@ -39,15 +39,26 @@ module Extends_Module{
 		interface Packet as RadioPacket;
 		interface AMPacket as RadioAMPacket;
 
-		/*interface Get<button_state_t> as Get;
-    interface Notify<button_state_t> as Notify;*/
+		// serial interface
+		interface SplitControl as SerialControl;
+		interface Receive as SerialReceive;
+		interface AMSend as SerialAMSend;
+		interface Packet as SerialPacket;
+
 	}
 }
 implementation {
 	message_t packetRadio;
+	message_t packetSerial;
+
 	radio_msg_t* rcmReceived;
+	serial_msg_t* rcmSerialReceived;
+
 	radio_msg_t* rcmSend;
+	serial_msg_t* rcmSerialSend;
+
 	int lockedRadio = FALSE;
+	int lockedSerial = FALSE;
 
 /***
 	* My OWN FUNCTIONS
@@ -72,6 +83,27 @@ implementation {
 		 }
 	}
 
+	// send a message by serial port
+	int sendSerialMessage(char * text, int nbChar){
+		if (lockedSerial) {
+			 return -1;
+		 } else {
+			 rcmSerialSend = (serial_msg_t*)call SerialPacket.getPayload(&packetSerial, sizeof(serial_msg_t));
+			 if (rcmSerialSend == NULL) {
+				 printf("La taille des donnees est trop grande\n");
+				 return -1;
+			 }
+
+			 memcpy(rcmSerialSend->text, text, sizeof(char)*nbChar);
+			 if (call SerialAMSend.send(AM_BROADCAST_ADDR, &packetSerial, sizeof(serial_msg_t)) == SUCCESS) {
+				 lockedSerial = TRUE;
+				 return 0;
+			 }else{
+				 return -1;
+			 }
+		 }
+	}
+
 
 /***
  * FUNCTIONS TO LISTEN AND COMMUNICATE WITH sensors
@@ -79,15 +111,16 @@ implementation {
 
 	// Initiate
 	event void Boot.booted(){
-		call Timer0.startPeriodic(500);
-		call Timer1.startPeriodic(1000);
-		/*call Timer2.startPeriodic(1500);*/
+		/*call Timer0.startPeriodic(500);*/
+		/*call Timer1.startPeriodic(1000);*/
+		call Timer2.startPeriodic(1500);
 
 		// start radio command
 		/*call RadioControl.start();*/
 
-		// listen button
-		/*call Notify.enable();*/
+		// start Serial
+		call SerialControl.start();
+
 	}
 
 	// Timers
@@ -105,7 +138,10 @@ implementation {
 		call Leds.led1Toggle();
 	}
 	event void Timer2.fired(){
-		if(sendMessage("c pa fo", 7) < 0)
+		/*if(sendMessage("c pa fo", 7) < 0)
+			printf("Error while sending the message\n");*/
+
+		if(sendSerialMessage("c pa fo\n", 8) < 0)
 			printf("Error while sending the message\n");
 		call Leds.led2Toggle();
 	}
@@ -151,6 +187,7 @@ implementation {
 	}
 
 
+// needed to radio control
 	event void RadioControl.startDone(error_t err) {
 	}
 
@@ -171,15 +208,31 @@ implementation {
 		rcmReceived = (radio_msg_t*)payload;
 		printf("%s \n", (char *) rcmReceived->text);
 		return bufPtr;
-
 	}
 
-	/*event void Notify.notify( button_state_t state ) {
-	 if ( state == BUTTON_PRESSED ) {
-		 call Leds.led2On();
-	 } else if ( state == BUTTON_RELEASED ) {
-		 call Leds.led2Off();
-	 }
- }*/
+	// needed to serial control
+	event void SerialControl.startDone(error_t err) {
+	}
+
+	event void SerialControl.stopDone(error_t err) {
+		printf("Le port serial est arretee");
+	}
+
+	event void SerialAMSend.sendDone(message_t* bufPtr, error_t error) {
+		if (&packetSerial == bufPtr) {
+			lockedSerial = FALSE;
+		}
+	}
+
+	event message_t* SerialReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
+		if (len != sizeof(serial_msg_t))
+			return bufPtr;
+
+		rcmSerialReceived = (serial_msg_t*)payload;
+		printf("%s \n", (char *) rcmSerialReceived->text);
+		return bufPtr;
+	}
+
+
 
 }

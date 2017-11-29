@@ -1,10 +1,11 @@
-configuration TinySmartAutomation{
-}
+configuration TinySmartAutomation{}
 implementation{
 	components MainC; // Main, needed to lauch app
 	components LedsC; // Leds manage
 	components Extends_Module; // My personnal modul where I test all components
-	components SerialPrintfC; // pour printf
+	components SerialPrintfC; // to use printf
+	components SerialActiveMessageC as Serial; // to serial port
+
 	// Timers (need to toggle on & off leds) manage module
 	components new TimerMilliC() as Timer0, new TimerMilliC() as Timer1, new TimerMilliC() as Timer2;
 	// Temperature and Humidity sensor
@@ -17,7 +18,6 @@ implementation{
 	components new AMSenderC(AM_RADIO_MSG);
 	components new AMReceiverC(AM_RADIO_MSG);
 
-	/*components UserButtonC;*/
 
 	// Load executable components
 	Extends_Module -> MainC.Boot;
@@ -44,8 +44,11 @@ implementation{
 	// Load leds manage component
 	Extends_Module.Leds -> LedsC;
 
-	// load user button component
-	/*Extends_Module.Get -> UserButtonC;
-	Extends_Module.Notify -> UserButtonC;*/
+	// load serial components
+	Extends_Module.SerialControl -> Serial;
+	Extends_Module.SerialReceive -> Serial.Receive[AM_SERIAL_MSG];
+	Extends_Module.SerialAMSend -> Serial.AMSend[AM_SERIAL_MSG];
+	Extends_Module.SerialPacket -> Serial;
+
 
 }

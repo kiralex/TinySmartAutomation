@@ -8,8 +8,15 @@
 typedef nx_struct radio_msg_type {
 	nx_int8_t text[20];
 } radio_msg_t;
+
+// to serial
+typedef nx_struct serial_msg_type {
+	nx_int8_t text[8];
+} serial_msg_t;
+
 enum {
   AM_RADIO_MSG = 0x88,
+  AM_SERIAL_MSG = 0x89,
 };
 
 
