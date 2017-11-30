@@ -56,6 +56,8 @@ implementation {
   serial_msg_t* rcmSerialSend;
   bool lockedSerial = FALSE;
 
+  bool enabled = FALSE;
+
 
   // to test serial port msg
   uint16_t counter = 0;
@@ -65,7 +67,10 @@ implementation {
    */
 
   command void switchInterface.start(){
-    call Leds.led1On();
+    /*call Leds.led1On();*/
+
+    call Timer1.startPeriodic(5000);
+    enabled = TRUE;
     /*call SerialControl.start();*/
   }
 
@@ -141,14 +146,16 @@ implementation {
   }
 
   event void Timer1.fired(){
-    call TempRead.read();
-    call HumidityRead.read();
-    call LightRead.read();
-    call VoltageRead.read();
+    if(enabled){
+      call TempRead.read();
+      call HumidityRead.read();
+      call LightRead.read();
+      call VoltageRead.read();
 
-    printf ("\n--------------------\n\n");
+      printf ("\n--------------------\n\n");
 
-    call Leds.led1Toggle();
+      call Leds.led1Toggle();
+    }
   }
 	event void Timer2.fired(){
 		/*if(sendMessage("c pa fo", 7) < 0)
@@ -162,42 +169,50 @@ implementation {
 
 
   event void TempRead.readDone(error_t result, u_int16_t val){
-    if (result == SUCCESS) {
-      printf ("Temperature : ");
-      printfFloat(convertVoltToTemperature(val));
-      printf (" C\n");
-    } else {
-      printf ("Error in temperature getting\n");
+    if(enabled){
+      if (result == SUCCESS) {
+        printf ("Temperature : ");
+        printfFloat(convertVoltToTemperature(val));
+        printf (" C\n");
+      } else {
+        printf ("Error in temperature getting\n");
+      }
     }
   }
 
   event void HumidityRead.readDone(error_t result, u_int16_t val){
-    if (result == SUCCESS) {
-      printf ("Humidity : ");
-      printfFloat(convertVoltToHumidity(val));
-      printf (" %%\n");
-    } else {
-      printf ("Error in humidity getting\n");
+    if(enabled){
+      if (result == SUCCESS) {
+        printf ("Humidity : ");
+        printfFloat(convertVoltToHumidity(val));
+        printf (" %%\n");
+      } else {
+        printf ("Error in humidity getting\n");
+      }
     }
   }
 
   event void LightRead.readDone(error_t result, u_int16_t val){
-    if (result == SUCCESS) {
-      printf ("Light : ");
-      printfFloat(convertVoltToLight(val));
-      printf (" Lux\n");
-    } else {
-      printf ("Error in light getting\n");
+    if(enabled){
+      if (result == SUCCESS) {
+        printf ("Light : ");
+        printfFloat(convertVoltToLight(val));
+        printf (" Lux\n");
+      } else {
+        printf ("Error in light getting\n");
+      }
     }
   }
 
   event void VoltageRead.readDone(error_t result, u_int16_t val){
-    if (result == SUCCESS) {
-      printf ("Voltage : ");
-      printfFloat(convertVoltageToVolt(val));
-      printf (" Volt\n");
-    } else {
-      printf ("Error in Voltage getting\n");
+    if(enabled){
+      if (result == SUCCESS) {
+        printf ("Voltage : ");
+        printfFloat(convertVoltageToVolt(val));
+        printf (" Volt\n");
+      } else {
+        printf ("Error in Voltage getting\n");
+      }
     }
   }
 
