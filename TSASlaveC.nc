@@ -10,7 +10,7 @@
 #define TRUE 1
 #define FALSE 0
 
-module TinySmartAutomationC {
+module TSASlaveC {
   uses {
     // Leds and initialize module
     interface Leds;
@@ -40,7 +40,6 @@ module TinySmartAutomationC {
     interface AMSend as SerialAMSend;
     interface Packet as SerialPacket;
   }
-
   provides{
     interface switchInterface;
   }
@@ -60,14 +59,12 @@ implementation {
   // to test serial port msg
   uint16_t counter = 0;
 
-  /***
-   * FUNCTIONS TO LISTEN AND COMMUNICATE WITH sensors
-   */
-
   command void switchInterface.start(){
-    call Leds.led1On();
+    call Leds.led2On();
     /*call SerialControl.start();*/
   }
+
+
 
 /***
 	* My OWN FUNCTIONS

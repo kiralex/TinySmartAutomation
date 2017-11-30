@@ -1,6 +1,3 @@
-
-
-
 #ifndef TINY_SMART_AUTOMATION_H
 #define TINY_SMART_AUTOMATION_H
 
