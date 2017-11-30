@@ -7,6 +7,7 @@ This is a WSN app. The goal of this app is to make a home automation system.
 ## Setup
 
 ```bash
+sudo tos-install-jni
 make telosb
 make telosb reinstall
 cd javaUI/
