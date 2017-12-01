@@ -42,7 +42,7 @@ module BaseStationM {
   }
 
   provides{
-    interface switchInterface;
+    interface SwitchInterface;
   }
 }
 implementation {
@@ -66,7 +66,7 @@ implementation {
    * FUNCTIONS TO LISTEN AND COMMUNICATE WITH sensors
    */
 
-  command void switchInterface.start(){
+  command void SwitchInterface.start(){
     /*call Leds.led1On();*/
 
     call Timer1.startPeriodic(5000);

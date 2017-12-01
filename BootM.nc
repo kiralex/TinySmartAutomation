@@ -9,8 +9,8 @@
 
 module BootM {
   uses interface Boot;
-  uses interface switchInterface as baseStation; // My base station modules
-  uses interface switchInterface as slave; // My base station modules
+  uses interface SwitchInterface as baseStation; // My base station modules
+  uses interface SwitchInterface as slave; // My base station modules
 }
 implementation {
   event void Boot.booted() {

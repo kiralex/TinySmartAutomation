@@ -41,7 +41,7 @@ module SlaveM {
     interface Packet as SerialPacket;
   }
   provides{
-    interface switchInterface;
+    interface SwitchInterface;
   }
 }
 implementation {
@@ -60,7 +60,7 @@ implementation {
   // to test serial port msg
   uint16_t counter = 0;
 
-  command void switchInterface.start(){
+  command void SwitchInterface.start(){
     call Leds.led2On();
     enabled = TRUE;
     /*call SerialControl.start();*/

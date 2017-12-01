@@ -1,3 +1,3 @@
-interface switchInterface{
+interface SwitchInterface{
   command void start();
 }
