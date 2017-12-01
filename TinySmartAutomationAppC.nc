@@ -1,14 +1,14 @@
-#include "TinySmartAutomation.h"
+#include "utils.h"
 
 configuration TinySmartAutomationAppC {}
 implementation {
   components MainC; // Main, needed to lauch app
 	components LedsC; // Leds manage
-	components TinySmartAutomationC as AppBaseStation; // My base station modules
-	components TSASlaveC as AppSlave; // My base station modules
+	components BaseStationM as AppBaseStation; // My base station modules
+	components SlaveM as AppSlave; // My base station modules
 
 	/*components TSASlaveC as AppSlave; // My slave*/
-  components bootC as App;
+  components BootM as App;
 	components SerialPrintfC; // to use printf
 	components SerialActiveMessageC as Serial; // to serial port
 

@@ -4,13 +4,13 @@
 #include "Timer.h"
 #include "message.h"
 
-#include "TinySmartAutomation.h"
-#include "TinySmartAutomation.c"
+#include "utils.h"
+#include "utils.c"
 
 #define TRUE 1
 #define FALSE 0
 
-module TSASlaveC {
+module BaseStationM {
   uses {
     // Leds and initialize module
     interface Leds;
@@ -40,6 +40,7 @@ module TSASlaveC {
     interface AMSend as SerialAMSend;
     interface Packet as SerialPacket;
   }
+
   provides{
     interface switchInterface;
   }
@@ -57,16 +58,21 @@ implementation {
 
   bool enabled = FALSE;
 
+
   // to test serial port msg
   uint16_t counter = 0;
 
+  /***
+   * FUNCTIONS TO LISTEN AND COMMUNICATE WITH sensors
+   */
+
   command void switchInterface.start(){
-    call Leds.led2On();
+    /*call Leds.led1On();*/
+
+    call Timer1.startPeriodic(5000);
     enabled = TRUE;
     /*call SerialControl.start();*/
   }
-
-
 
 /***
 	* My OWN FUNCTIONS
