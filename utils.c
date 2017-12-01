@@ -1,3 +1,5 @@
+#ifndef __TINYSMARTAUTOMATION_C__
+#define __TINYSMARTAUTOMATION_C__
 
 #include <stdint.h>
 #include <inttypes.h>
@@ -6,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "TinySmartAutomation.h"
+#include "utils.h"
 
 
 /**
@@ -59,3 +61,5 @@ void printfFloat(float toBePrinted) {
    f2 = f*1000; f2 %= 10;
    printf("%c%ld.%d%d%d", c, fi, (uint8_t) f0, (uint8_t) f1, (uint8_t) f2);
  }
+
+#endif
