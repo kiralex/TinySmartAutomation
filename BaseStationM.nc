@@ -87,7 +87,6 @@ implementation {
 				 return -1;
 			 }
 
-			 memcpy(rcmSend->text, text, sizeof(char)*nbChar);
 			 if (call RadioAMSend.send(AM_BROADCAST_ADDR, &packetRadio, sizeof(radio_msg_t)) == SUCCESS) {
 				 lockedRadio = TRUE;
 				 return 0;
@@ -240,9 +239,7 @@ implementation {
     if(enabled){
       if (len != sizeof(radio_msg_t))
         return bufPtr;
-
-      rcmRadioReceived = (radio_msg_t*)payload;
-      printf("%s \n", (char *) rcmRadioReceived->text);
+        
       return bufPtr;
     }
   }
