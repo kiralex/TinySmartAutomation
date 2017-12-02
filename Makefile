@@ -1,6 +1,6 @@
 COMPONENT=TinySmartAutomationAppC
 TOSMAKE_PRE_EXE_DEPS += javaUI/TinySmartAutomation.class
-TOSMAKE_CLEAN_EXTRA = javaUI/*.class javaUI/TinySmartAutomationMsg.java
+TOSMAKE_CLEAN_EXTRA = javaUI/*.class
 
 javaUI/TinySmartAutomation.class: $(wildcard javaUI/*.java) javaUI/TinySmartAutomationMsg.java
 	javac -target 1.4 -source 1.4 javaUI/*.java
