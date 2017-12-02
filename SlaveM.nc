@@ -95,12 +95,8 @@ implementation {
       call LightRead.read();
       call VoltageRead.read();
 
-      printf ("\n----------slave----------\n\n");
-      if(sendSensorsInformation() >= 0)
-        printf("messsage envoyé");
-      else
-        printf("messsage non envoyé !!! ");
-
+      /*printf ("\n----------slave----------\n\n");*/
+      sendSensorsInformation();
 
       call Leds.led1Toggle();
     }
@@ -110,9 +106,9 @@ implementation {
     if(enabled){
       if (result == SUCCESS) {
         temperature = convertVoltToTemperature(val);
-        printf ("Temperature : ");
+        /*printf ("Temperature : ");
         printfFloat(temperature);
-        printf (" C\n");
+        printf (" C\n");*/
       } else
         printf ("Error in temperature getting\n");
     }
@@ -122,9 +118,9 @@ implementation {
     if(enabled){
       if (result == SUCCESS) {
         humidity = convertVoltToHumidity(val);
-        printf ("Humidity : ");
+        /*printf ("Humidity : ");
         printfFloat(humidity);
-        printf (" %%\n");
+        printf (" %%\n");*/
       } else
         printf ("Error in humidity getting\n");
 
@@ -135,9 +131,9 @@ implementation {
     if(enabled){
       if (result == SUCCESS) {
         brightness = convertVoltToLight(val);
-        printf ("Light : ");
+        /*printf ("Light : ");
         printfFloat(brightness);
-        printf (" Lux\n");
+        printf (" Lux\n");*/
       } else {
         printf ("Error in light getting\n");
       }
@@ -148,9 +144,9 @@ implementation {
     if(enabled){
       if (result == SUCCESS) {
         voltage = convertVoltageToVolt(val);
-        printf ("Voltage : ");
+        /*printf ("Voltage : ");
         printfFloat(voltage);
-        printf (" Volt\n");
+        printf (" Volt\n");*/
       } else {
         printf ("Error in Voltage getting\n");
       }
@@ -187,17 +183,19 @@ implementation {
     rcmRadioReceived = (radio_msg_t*)payload;
     memcpy(&humidityL, &rcmRadioReceived->humidity, sizeof(nx_uint32_t));
     memcpy(&temperatureL, &rcmRadioReceived->temperature, sizeof(nx_uint32_t));
-    memcpy(&brightness, &rcmRadioReceived->brightness, sizeof(nx_uint32_t));
+    memcpy(&brightnessL, &rcmRadioReceived->brightness, sizeof(nx_uint32_t));
     memcpy(&voltageL, &rcmRadioReceived->voltage, sizeof(nx_uint32_t));
-    memcpy(&roomID, &rcmRadioReceived->roomID, sizeof(nx_uint8_t));
+    memcpy(&roomIDL, &rcmRadioReceived->roomID, sizeof(nx_uint8_t));
     memcpy(&sensorIDL, &rcmRadioReceived->sensorID, sizeof(nx_uint8_t));
 
-    printf("Sensor ID : %d", sensorIDL);
-    printf("Room ID : %d", roomIDL);
+    printf("Sensor ID : %d\n", sensorIDL);
+    printf("Room ID : %d\n", roomIDL);
     printfMessagePlusFloat("Humidity (%%) : ", humidityL);
     printfMessagePlusFloat("Temperature (Celcius) : ", temperatureL);
     printfMessagePlusFloat("Brightness (Lux) : ", brightnessL);
-    printfMessagePlusFloat("voltage (V) : ", voltage);
+    printfMessagePlusFloat("voltage (V) : ", voltageL);
+
+    printf("----------------------------------\n\n");
 
     return bufPtr;
   }
