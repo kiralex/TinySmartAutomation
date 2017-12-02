@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+// max radio message size : 28 Bytes
 typedef nx_struct radio_msg_type {
 	nx_int8_t text[20];
 } radio_msg_t;
@@ -13,7 +14,7 @@ typedef nx_struct serial_msg {
 } serial_msg_t;
 
 enum {
-  AM_RADIO_MSG = 0x88,
+  AM_RADIO_MSG = 0xFF,
   AM_SERIAL_MSG = 0x89,
 };
 

@@ -126,21 +126,23 @@ implementation {
 
 	// Timers
   event void Timer0.fired() {
-		call Leds.led0Toggle();
-    counter++;
-    if (lockedSerial) {
-      return;
-    }
-    else {
-      serial_msg_t* rcm = (serial_msg_t*)call SerialPacket.getPayload(&packetSerial, sizeof(serial_msg_t));
-      if (rcm == NULL) {return;}
-      if (call SerialPacket.maxPayloadLength() < sizeof(serial_msg_t)) {
-	         return;
+    if(enabled){
+  		call Leds.led0Toggle();
+      counter++;
+      if (lockedSerial) {
+        return;
       }
+      else {
+        serial_msg_t* rcm = (serial_msg_t*)call SerialPacket.getPayload(&packetSerial, sizeof(serial_msg_t));
+        if (rcm == NULL) {return;}
+        if (call SerialPacket.maxPayloadLength() < sizeof(serial_msg_t)) {
+  	         return;
+        }
 
-      rcm->counter = counter;
-      if (call SerialAMSend.send(AM_BROADCAST_ADDR, &packetSerial, sizeof(serial_msg_t)) == SUCCESS) {
-	lockedSerial = TRUE;
+        rcm->counter = counter;
+        if (call SerialAMSend.send(AM_BROADCAST_ADDR, &packetSerial, sizeof(serial_msg_t)) == SUCCESS) {
+  	lockedSerial = TRUE;
+        }
       }
     }
   }
@@ -158,12 +160,14 @@ implementation {
     }
   }
 	event void Timer2.fired(){
-		/*if(sendMessage("c pa fo", 7) < 0)
-			printf("Error while sending the message\n");*/
+    if(enabled){
+  		/*if(sendMessage("c pa fo", 7) < 0)
+  			printf("Error while sending the message\n");*/
 
-		/*if(sendSerialMessage("c pa fo\n", 8) < 0)
-			printf("Error while sending the message\n");*/
-		call Leds.led2Toggle();
+  		/*if(sendSerialMessage("c pa fo\n", 8) < 0)
+  			printf("Error while sending the message\n");*/
+  		call Leds.led2Toggle();
+    }
 	}
 
 
@@ -222,22 +226,25 @@ implementation {
   }
 
   event void RadioControl.stopDone(error_t err) {
-    printf("La radio est arretee");
+    if(enabled)
+      printf("La radio est arretee");
   }
 
   event void RadioAMSend.sendDone(message_t* bufPtr, error_t error) {
-    if (&packetRadio == bufPtr) {
+    if (enabled && &packetRadio == bufPtr) {
       lockedRadio = FALSE;
     }
   }
 
   event message_t* RadioReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
-    if (len != sizeof(radio_msg_t))
-      return bufPtr;
+    if(enabled){
+      if (len != sizeof(radio_msg_t))
+        return bufPtr;
 
-    rcmRadioReceived = (radio_msg_t*)payload;
-    printf("%s \n", (char *) rcmRadioReceived->text);
-    return bufPtr;
+      rcmRadioReceived = (radio_msg_t*)payload;
+      printf("%s \n", (char *) rcmRadioReceived->text);
+      return bufPtr;
+    }
   }
 
 
