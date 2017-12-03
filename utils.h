@@ -15,7 +15,12 @@ typedef nx_struct radio_msg_type {
 } radio_msg_t;
 
 typedef nx_struct serial_msg {
-								nx_uint16_t counter;
+								nx_uint8_t sensorID;
+								nx_uint8_t roomID;
+								nx_uint32_t temperature;
+								nx_uint32_t humidity;
+								nx_uint32_t brightness;
+								nx_uint32_t voltage;
 } serial_msg_t;
 
 enum {

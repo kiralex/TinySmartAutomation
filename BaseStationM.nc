@@ -71,7 +71,7 @@ implementation {
 
     call Timer1.startPeriodic(5000);
     enabled = TRUE;
-    /*call SerialControl.start();*/
+    call SerialControl.start();
   }
 
 /***
@@ -83,7 +83,7 @@ implementation {
 		 } else {
 			 rcmSend = (radio_msg_t*)call RadioPacket.getPayload(&packetRadio, sizeof(radio_msg_t));
 			 if (rcmSend == NULL) {
-				 printf("La taille des donnees est trop grande\n");
+				 //printf("La taille des donnees est trop grande\n");
 				 return -1;
 			 }
 
@@ -97,23 +97,30 @@ implementation {
 	}
 
 	// send a message by serial port
-	int sendSerialMessage(char * text, int nbChar){
+	int sendSerial(){
+    float f = -3.5;
 		counter++;
 		if (lockedSerial) {
 			 return -1;
 		 } else {
 			 rcmSerialSend = (serial_msg_t*)call SerialPacket.getPayload(&packetSerial, sizeof(serial_msg_t));
 			 if (rcmSerialSend == NULL) {
-				 printf("La taille des donnees est trop grande\n");
+				 //printf("La taille des donnees est trop grande\n");
 				 return -1;
 			 }
 			 if (call SerialPacket.maxPayloadLength() < sizeof(serial_msg_t)) {
-				 printf("La taille des donnees est trop grande (maxpayload)\n");
+				 //printf("La taille des donnees est trop grande (maxpayload)\n");
 				 return -1;
       }
 
+
 			 /*memcpy(rcmSerialSend->text, text, sizeof(char)*nbChar);*/
-			 rcmSerialSend->counter = counter;
+       memcpy(&rcmSerialSend->temperature, &f, sizeof(nx_uint32_t));
+       memcpy(&rcmSerialSend->humidity, &f, sizeof(nx_uint32_t));
+       memcpy(&rcmSerialSend->sensorID, &f, sizeof(nx_uint8_t));
+       memcpy(&rcmSerialSend->roomID, &f, sizeof(nx_uint8_t));
+       memcpy(&rcmSerialSend->voltage, &f, sizeof(nx_uint32_t));
+       memcpy(&rcmSerialSend->brightness, &f, sizeof(nx_uint32_t));
 			 if (call SerialAMSend.send(AM_BROADCAST_ADDR, &packetSerial, sizeof(serial_msg_t)) == SUCCESS) {
 				 lockedSerial = TRUE;
 				 return 0;
@@ -126,34 +133,20 @@ implementation {
 	// Timers
   event void Timer0.fired() {
     if(enabled){
-  		call Leds.led0Toggle();
-      counter++;
-      if (lockedSerial) {
-        return;
-      }
-      else {
-        serial_msg_t* rcm = (serial_msg_t*)call SerialPacket.getPayload(&packetSerial, sizeof(serial_msg_t));
-        if (rcm == NULL) {return;}
-        if (call SerialPacket.maxPayloadLength() < sizeof(serial_msg_t)) {
-  	         return;
-        }
 
-        rcm->counter = counter;
-        if (call SerialAMSend.send(AM_BROADCAST_ADDR, &packetSerial, sizeof(serial_msg_t)) == SUCCESS) {
-  	lockedSerial = TRUE;
-        }
-      }
     }
   }
 
   event void Timer1.fired(){
     if(enabled){
-      call TempRead.read();
+      /*call TempRead.read();
       call HumidityRead.read();
       call LightRead.read();
-      call VoltageRead.read();
+      call VoltageRead.read();*/
 
-      printf ("\n--------------------\n\n");
+      //printf ("\n--------------------\n\n");
+
+      sendSerial();
 
       call Leds.led1Toggle();
     }
@@ -161,10 +154,10 @@ implementation {
 	event void Timer2.fired(){
     if(enabled){
   		/*if(sendMessage("c pa fo", 7) < 0)
-  			printf("Error while sending the message\n");*/
+  			//printf("Error while sending the message\n");*/
 
   		/*if(sendSerialMessage("c pa fo\n", 8) < 0)
-  			printf("Error while sending the message\n");*/
+  			//printf("Error while sending the message\n");*/
   		call Leds.led2Toggle();
     }
 	}
@@ -174,11 +167,11 @@ implementation {
   event void TempRead.readDone(error_t result, u_int16_t val){
     if(enabled){
       if (result == SUCCESS) {
-        printf ("Temperature : ");
-        printfFloat(convertVoltToTemperature(val));
-        printf (" C\n");
+        //printf ("Temperature : ");
+        //printfFloat(convertVoltToTemperature(val));
+        //printf (" C\n");
       } else {
-        printf ("Error in temperature getting\n");
+        //printf ("Error in temperature getting\n");
       }
     }
   }
@@ -186,11 +179,11 @@ implementation {
   event void HumidityRead.readDone(error_t result, u_int16_t val){
     if(enabled){
       if (result == SUCCESS) {
-        printf ("Humidity : ");
-        printfFloat(convertVoltToHumidity(val));
-        printf (" %%\n");
+        //printf ("Humidity : ");
+        //printfFloat(convertVoltToHumidity(val));
+        //printf (" %%\n");
       } else {
-        printf ("Error in humidity getting\n");
+        //printf ("Error in humidity getting\n");
       }
     }
   }
@@ -198,11 +191,11 @@ implementation {
   event void LightRead.readDone(error_t result, u_int16_t val){
     if(enabled){
       if (result == SUCCESS) {
-        printf ("Light : ");
-        printfFloat(convertVoltToLight(val));
-        printf (" Lux\n");
+        //printf ("Light : ");
+        //printfFloat(convertVoltToLight(val));
+        //printf (" Lux\n");
       } else {
-        printf ("Error in light getting\n");
+        //printf ("Error in light getting\n");
       }
     }
   }
@@ -210,11 +203,11 @@ implementation {
   event void VoltageRead.readDone(error_t result, u_int16_t val){
     if(enabled){
       if (result == SUCCESS) {
-        printf ("Voltage : ");
-        printfFloat(convertVoltageToVolt(val));
-        printf (" Volt\n");
+        //printf ("Voltage : ");
+        //printfFloat(convertVoltageToVolt(val));
+        //printf (" Volt\n");
       } else {
-        printf ("Error in Voltage getting\n");
+        //printf ("Error in Voltage getting\n");
       }
     }
   }
@@ -225,8 +218,8 @@ implementation {
   }
 
   event void RadioControl.stopDone(error_t err) {
-    if(enabled)
-      printf("La radio est arretee");
+    if(enabled);
+      //printf("La radio est arretee");
   }
 
   event void RadioAMSend.sendDone(message_t* bufPtr, error_t error) {
@@ -239,7 +232,7 @@ implementation {
     if(enabled){
       if (len != sizeof(radio_msg_t))
         return bufPtr;
-        
+
       return bufPtr;
     }
   }
@@ -248,7 +241,7 @@ implementation {
 
   event void SerialControl.startDone(error_t err) {
     if (err == SUCCESS) {
-      call Timer0.startPeriodic(1000);
+      //call Timer0.startPeriodic(1000);
     }
   }
   event void SerialControl.stopDone(error_t err) {}
@@ -264,14 +257,14 @@ implementation {
     else {
       serial_msg_t* rcm = (serial_msg_t*)payload;
 
-      if (rcm->counter & 0x1) { call Leds.led0On(); }
+      /*if (rcm->counter & 0x1) { call Leds.led0On(); }
       else { call Leds.led0Off(); }
 
       if (rcm->counter & 0x2) { call Leds.led1On(); }
       else { call Leds.led1Off(); }
 
       if (rcm->counter & 0x4) { call Leds.led2On(); }
-      else { call Leds.led2Off(); }
+      else { call Leds.led2Off(); }*/
 
       return bufPtr;
     }
