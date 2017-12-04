@@ -14,10 +14,15 @@ module BootM {
 }
 implementation {
   event void Boot.booted() {
-    if(TOS_NODE_ID == 0)
+    printf("TOS_NODE_ID=%d\n", TOS_NODE_ID);
+    if(TOS_NODE_ID == 1){
+      printf("Démarrage en tant que station de base");
       call baseStation.start();
-    else
+    }
+    else{
+      printf("Démarrage en tant qu'esclave");
       call slave.start();
+    }
 
     /*call SerialControl.start();*/
   }

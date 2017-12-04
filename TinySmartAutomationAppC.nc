@@ -25,8 +25,6 @@ implementation {
   components new AMSenderC(AM_RADIO_MSG);
   components new AMReceiverC(AM_RADIO_MSG);
 
-
-
   App.Boot -> MainC.Boot;
   App.baseStation -> AppBaseStation;
   App.slave -> AppSlave;
@@ -65,8 +63,6 @@ implementation {
 
   // Use timers module, toggle light led
   AppSlave.Timer0 -> Timer0;
-  AppSlave.Timer1 -> Timer1;
-  AppSlave.Timer2 -> Timer2;
 
   // Temperature Humidity and light, voltage components voltage value.
   AppSlave.TempRead -> TempAndHumidSensor.Temperature;
@@ -76,12 +72,6 @@ implementation {
 
   // Load leds manage component
   AppSlave.Leds -> LedsC;
-
-  // load serial components
-  AppSlave.SerialControl -> Serial;
-  AppSlave.SerialReceive -> Serial.Receive[AM_SERIAL_MSG];
-  AppSlave.SerialAMSend -> Serial.AMSend[AM_SERIAL_MSG];
-  AppSlave.SerialPacket -> Serial;
 
 
 }
