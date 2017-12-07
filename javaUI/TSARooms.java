@@ -332,4 +332,41 @@ public class TSARooms extends JFrame {
     private JLabel lightBindR3S1;
     private JPanel panel7;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
+
+
+    public void setTempBindR1S1(String tempBindR1S1) {
+        this.tempBindR1S1.setText(tempBindR1S1);
+    }
+
+    public void setHumidBindR1S1(String humidBindR1S1) {
+        this.humidBindR1S1.setText(humidBindR1S1);
+    }
+
+    public void setLightBindR1S1(String lightBindR1S1) {
+        this.lightBindR1S1.setText(lightBindR1S1);
+    }
+
+    public void setTempBindR2S1(String tempBindR2S1) {
+        this.tempBindR2S1.setText(tempBindR2S1);
+    }
+
+    public void setHumidBindR2S1(String humidBindR2S1) {
+        this.humidBindR2S1.setText(humidBindR2S1);
+    }
+
+    public void setLightBindR2S1(String lightBindR2S1) {
+        this.lightBindR2S1.setText(lightBindR2S1);
+    }
+
+    public void setTempBindR3S1(String tempBindR3S1) {
+        this.tempBindR3S1.setText(tempBindR3S1);
+    }
+
+    public void setHumidBindR3S1(String humidBindR3S1) {
+        this.humidBindR3S1.setText(humidBindR3S1);
+    }
+
+    public void setLightBindR3S1(String lightBindR3S1) {
+        this.lightBindR3S1.setText(lightBindR3S1);
+    }
 }
