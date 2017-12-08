@@ -10,6 +10,7 @@ public class TinySmartAutomation implements MessageListener {
 
   private MoteIF moteIF;
   private TSARooms tsa;
+  private boolean GUIStarted = false;
 
   public TinySmartAutomation(MoteIF moteIF) {
     this.moteIF = moteIF;
@@ -59,25 +60,26 @@ public class TinySmartAutomation implements MessageListener {
   }
 
   public void messageReceived(int to, Message message) {
-    TinySmartAutomationMsg msg = (TinySmartAutomationMsg) message;
-    System.out.println("Received message");
-    float f;
-    long l;
+    if (this.GUIStarted) {
+      TinySmartAutomationMsg msg = (TinySmartAutomationMsg) message;
+      long l;
+      float f;
 
-    l = msg.get_temperature();
-    f = convertLongtoFloatBinary(l);
-    String temp = Float.toString(f);
-    tsa.setTempBindR1S1("°C : "+temp);
+      l = msg.get_temperature();
+      f = convertLongtoFloatBinary(l);
+      String value = Float.toString(f);
+      tsa.setTempBindR1S1(value != null ? value + " °C" : "");
 
-    l = msg.get_humidity();
-    f = convertLongtoFloatBinary(l);
-    temp = Float.toString(f);
-    tsa.setHumidBindR1S1("% : "+temp);
+      l = msg.get_humidity();
+      f = convertLongtoFloatBinary(l);
+      value = Float.toString(f);
+      tsa.setHumidBindR1S1(value != null ? value + " %" : "");
 
-    l = msg.get_brightness();
-    f = convertLongtoFloatBinary(l);
-    temp = Float.toString(f);
-    tsa.setLightBindR1S1("Lumens : "+temp);
+      l = msg.get_brightness();
+      f = convertLongtoFloatBinary(l);
+      value = Float.toString(f);
+      tsa.setLightBindR1S1(value != null ? value + " Lux" : "");
+    }
   }
 
   private static void usage() {
@@ -116,10 +118,8 @@ public class TinySmartAutomation implements MessageListener {
 
     tsa = new TSARooms();
     tsa.setVisible(true);
-
-    tsa.setTempBindR1S1("modifié");
-
-    System.out.println("hélène ! pouit ! panda !");
+    this.GUIStarted = true;
+    System.out.println("Interface graphique lancée");
   }
 
 }

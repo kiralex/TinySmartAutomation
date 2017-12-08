@@ -156,46 +156,51 @@ implementation {
 
   // needed to radio control
   event void RadioControl.startDone(error_t err) {
+    if (enabled) {}
   }
 
   event void RadioControl.stopDone(error_t err) {
-    printf("La radio est arretee");
+    if (enabled) {}
   }
 
   event void RadioAMSend.sendDone(message_t* bufPtr, error_t error) {
-    if (&packetRadio == bufPtr) {
-      lockedRadio = FALSE;
+    if (enabled) {
+        if (&packetRadio == bufPtr) {
+          lockedRadio = FALSE;
+        }
     }
   }
 
   event message_t* RadioReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
-    float humidityL = -1;
-    float temperatureL = -1;
-    float brightnessL = -1;
-    float voltageL = -1;
-    uint8_t roomIDL = -1;
-    uint8_t sensorIDL = -1;
+    if (enabled) {
+        float humidityL = -1;
+        float temperatureL = -1;
+        float brightnessL = -1;
+        float voltageL = -1;
+        uint8_t roomIDL = -1;
+        uint8_t sensorIDL = -1;
 
 
-    if (len != sizeof(radio_msg_t))
-      return bufPtr;
+        if (len != sizeof(radio_msg_t))
+          return bufPtr;
 
-    rcmRadioReceived = (radio_msg_t*)payload;
-    memcpy(&humidityL, &rcmRadioReceived->humidity, sizeof(nx_uint32_t));
-    memcpy(&temperatureL, &rcmRadioReceived->temperature, sizeof(nx_uint32_t));
-    memcpy(&brightnessL, &rcmRadioReceived->brightness, sizeof(nx_uint32_t));
-    memcpy(&voltageL, &rcmRadioReceived->voltage, sizeof(nx_uint32_t));
-    memcpy(&roomIDL, &rcmRadioReceived->roomID, sizeof(nx_uint8_t));
-    memcpy(&sensorIDL, &rcmRadioReceived->sensorID, sizeof(nx_uint8_t));
+        rcmRadioReceived = (radio_msg_t*)payload;
+        memcpy(&humidityL, &rcmRadioReceived->humidity, sizeof(nx_uint32_t));
+        memcpy(&temperatureL, &rcmRadioReceived->temperature, sizeof(nx_uint32_t));
+        memcpy(&brightnessL, &rcmRadioReceived->brightness, sizeof(nx_uint32_t));
+        memcpy(&voltageL, &rcmRadioReceived->voltage, sizeof(nx_uint32_t));
+        memcpy(&roomIDL, &rcmRadioReceived->roomID, sizeof(nx_uint8_t));
+        memcpy(&sensorIDL, &rcmRadioReceived->sensorID, sizeof(nx_uint8_t));
 
-    printf("Sensor ID : %d\n", sensorIDL);
-    printf("Room ID : %d\n", roomIDL);
-    printfMessagePlusFloat("Humidity (%%) : ", humidityL);
-    printfMessagePlusFloat("Temperature (Celcius) : ", temperatureL);
-    printfMessagePlusFloat("Brightness (Lux) : ", brightnessL);
-    printfMessagePlusFloat("voltage (V) : ", voltageL);
+        printf("Sensor ID : %d\n", sensorIDL);
+        printf("Room ID : %d\n", roomIDL);
+        printfMessagePlusFloat("Humidity (%%) : ", humidityL);
+        printfMessagePlusFloat("Temperature (Celcius) : ", temperatureL);
+        printfMessagePlusFloat("Brightness (Lux) : ", brightnessL);
+        printfMessagePlusFloat("voltage (V) : ", voltageL);
 
-    printf("----------------------------------\n\n");
+        printf("----------------------------------\n\n");
+    }
 
     return bufPtr;
   }

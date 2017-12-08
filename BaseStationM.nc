@@ -47,7 +47,7 @@ module BaseStationM {
 }
 implementation {
   message_t packetRadio;
-  radio_msg_t* rcmRadioReceived;
+//  radio_msg_t* rcmRadioReceived;
   radio_msg_t* rcmSend;
   bool lockedRadio = FALSE;
 
@@ -58,21 +58,14 @@ implementation {
 
   bool enabled = FALSE;
 
-
-  // to test serial port msg
-  uint16_t counter = 0;
-  float f = -3.5;
-
   /***
    * FUNCTIONS TO LISTEN AND COMMUNICATE WITH sensors
    */
 
   command void SwitchInterface.start(){
-    /*call Leds.led1On();*/
-
-    call Timer1.startPeriodic(5000);
     enabled = TRUE;
     call SerialControl.start();
+    call RadioControl.start();
   }
 
 /***
@@ -98,9 +91,7 @@ implementation {
 	}
 
 	// send a message by serial port
-	int sendSerial(){
-        f++;
-		counter++;
+	int sendSerial(radio_msg_t * msg){
 		if (lockedSerial) {
 			 return -1;
 		 } else {
@@ -116,12 +107,12 @@ implementation {
 
 
 			 /*memcpy(rcmSerialSend->text, text, sizeof(char)*nbChar);*/
-       memcpy(&rcmSerialSend->temperature, &f, sizeof(nx_uint32_t));
-       memcpy(&rcmSerialSend->humidity, &f, sizeof(nx_uint32_t));
-       memcpy(&rcmSerialSend->sensorID, &f, sizeof(nx_uint8_t));
-       memcpy(&rcmSerialSend->roomID, &f, sizeof(nx_uint8_t));
-       memcpy(&rcmSerialSend->voltage, &f, sizeof(nx_uint32_t));
-       memcpy(&rcmSerialSend->brightness, &f, sizeof(nx_uint32_t));
+       memcpy(&rcmSerialSend->temperature, &msg->temperature, sizeof(nx_uint32_t));
+       memcpy(&rcmSerialSend->humidity, &msg->humidity, sizeof(nx_uint32_t));
+       memcpy(&rcmSerialSend->sensorID, &msg->sensorID, sizeof(nx_uint8_t));
+       memcpy(&rcmSerialSend->roomID, &msg->roomID, sizeof(nx_uint8_t));
+       memcpy(&rcmSerialSend->voltage, &msg->voltage, sizeof(nx_uint32_t));
+       memcpy(&rcmSerialSend->brightness, &msg->brightness, sizeof(nx_uint32_t));
 			 if (call SerialAMSend.send(AM_BROADCAST_ADDR, &packetSerial, sizeof(serial_msg_t)) == SUCCESS) {
 				 lockedSerial = TRUE;
 				 return 0;
@@ -140,27 +131,13 @@ implementation {
 
   event void Timer1.fired(){
     if(enabled){
-      /*call TempRead.read();
-      call HumidityRead.read();
-      call LightRead.read();
-      call VoltageRead.read();*/
-
-      //printf ("\n--------------------\n\n");
-
-      sendSerial();
-
       call Leds.led1Toggle();
     }
   }
 	event void Timer2.fired(){
-    if(enabled){
-  		/*if(sendMessage("c pa fo", 7) < 0)
-  			//printf("Error while sending the message\n");*/
-
-  		/*if(sendSerialMessage("c pa fo\n", 8) < 0)
-  			//printf("Error while sending the message\n");*/
-  		call Leds.led2Toggle();
-    }
+        if(enabled){
+            call Leds.led2Toggle();
+        }
 	}
 
 
@@ -168,11 +145,7 @@ implementation {
   event void TempRead.readDone(error_t result, u_int16_t val){
     if(enabled){
       if (result == SUCCESS) {
-        //printf ("Temperature : ");
-        //printfFloat(convertVoltToTemperature(val));
-        //printf (" C\n");
       } else {
-        //printf ("Error in temperature getting\n");
       }
     }
   }
@@ -180,11 +153,7 @@ implementation {
   event void HumidityRead.readDone(error_t result, u_int16_t val){
     if(enabled){
       if (result == SUCCESS) {
-        //printf ("Humidity : ");
-        //printfFloat(convertVoltToHumidity(val));
-        //printf (" %%\n");
       } else {
-        //printf ("Error in humidity getting\n");
       }
     }
   }
@@ -192,11 +161,7 @@ implementation {
   event void LightRead.readDone(error_t result, u_int16_t val){
     if(enabled){
       if (result == SUCCESS) {
-        //printf ("Light : ");
-        //printfFloat(convertVoltToLight(val));
-        //printf (" Lux\n");
       } else {
-        //printf ("Error in light getting\n");
       }
     }
   }
@@ -204,11 +169,7 @@ implementation {
   event void VoltageRead.readDone(error_t result, u_int16_t val){
     if(enabled){
       if (result == SUCCESS) {
-        //printf ("Voltage : ");
-        //printfFloat(convertVoltageToVolt(val));
-        //printf (" Volt\n");
       } else {
-        //printf ("Error in Voltage getting\n");
       }
     }
   }
@@ -216,11 +177,12 @@ implementation {
 
   // needed to radio control
   event void RadioControl.startDone(error_t err) {
+    if (enabled)  {}
   }
 
   event void RadioControl.stopDone(error_t err) {
-    if(enabled);
-      //printf("La radio est arretee");
+    if(enabled) {
+    }
   }
 
   event void RadioAMSend.sendDone(message_t* bufPtr, error_t error) {
@@ -229,12 +191,18 @@ implementation {
     }
   }
 
-  event message_t* RadioReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
-    if(enabled){
-      if (len != sizeof(radio_msg_t))
-        return bufPtr;
+   event message_t* RadioReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
+   if (enabled) {
+        radio_msg_t * rcmRadioReceived;
+        call Leds.led2Toggle();
 
-      return bufPtr;
+        if (len != sizeof(radio_msg_t))
+          return bufPtr;
+
+        rcmRadioReceived = (radio_msg_t*)payload;
+        sendSerial(rcmRadioReceived);
+
+        return bufPtr;
     }
   }
 
@@ -257,16 +225,6 @@ implementation {
     if (len != sizeof(serial_msg_t)) {return bufPtr;}
     else {
       serial_msg_t* rcm = (serial_msg_t*)payload;
-
-      /*if (rcm->counter & 0x1) { call Leds.led0On(); }
-      else { call Leds.led0Off(); }
-
-      if (rcm->counter & 0x2) { call Leds.led1On(); }
-      else { call Leds.led1Off(); }
-
-      if (rcm->counter & 0x4) { call Leds.led2On(); }
-      else { call Leds.led2Off(); }*/
-
       return bufPtr;
     }
   }
