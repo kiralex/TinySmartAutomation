@@ -445,6 +445,21 @@ public class TSARooms extends JFrame {
         this.lightBindR1S1.setText(lightBindR1S1);
     }
 
+
+    public void setTempBindR1S2(String tempBindR1S2) {
+        this.tempBindR1S2.setText(tempBindR1S2);
+    }
+
+    public void setHumidBindR1S2(String humidBindR1S2) {
+        this.humidBindR1S2.setText(humidBindR1S2);
+    }
+
+    public void setLightBindR1S2(String lightBindR1S2) {
+        this.lightBindR1S2.setText(lightBindR1S2);
+    }
+
+
+
     public void setTempBindR2S1(String tempBindR2S1) {
         this.tempBindR2S1.setText(tempBindR2S1);
     }

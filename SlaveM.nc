@@ -48,7 +48,7 @@ implementation {
   float temperature = -1;
   float brightness = -1;
   float voltage = -1;
-  uint8_t roomID = 0;
+  uint8_t roomID = 1;
   uint8_t sensorID = -1;
 
 /***

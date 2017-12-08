@@ -66,22 +66,62 @@ public class TinySmartAutomation implements MessageListener {
             TinySmartAutomationMsg msg = (TinySmartAutomationMsg) message;
             long l;
             float f;
-            DecimalFormat df = new DecimalFormat();
+            short sensorID, roomID;
+            DecimalFormat df;
+
+            sensorID = msg.get_sensorID();
+            roomID = msg.get_roomID();
+            df = new DecimalFormat();
             df.setMaximumFractionDigits(2);
 
-            l = msg.get_temperature();
-            f = convertLongtoFloatBinary(l);
-            String value = df.format(f);
-            tsa.setTempBindR1S1(value != null ? value + " °C" : "");
+            if (roomID == 1) {
+                if (sensorID == 11) {
+                    l = msg.get_temperature();
+                    f = convertLongtoFloatBinary(l);
+                    String value = df.format(f);
+                    tsa.setTempBindR1S1(value != null ? value + " °C" : "");
 
-            l = msg.get_humidity();
-            f = convertLongtoFloatBinary(l);
-            value = df.format(f);
-            tsa.setHumidBindR1S1(value != null ? value + " %" : "");
+                    l = msg.get_humidity();
+                    f = convertLongtoFloatBinary(l);
+                    value = df.format(f);
+                    tsa.setHumidBindR1S1(value != null ? value + " %" : "");
 
-            l = msg.get_brightness();
-            value = df.format(f);
-            tsa.setLightBindR1S1(value != null ? value + " Lux" : "");
+                    l = msg.get_brightness();
+                    value = df.format(f);
+                    tsa.setLightBindR1S1(value != null ? value + " Lux" : "");
+                } else if ( sensorID == 12) {
+                    l = msg.get_temperature();
+                    f = convertLongtoFloatBinary(l);
+                    String value = df.format(f);
+                    tsa.setTempBindR1S2(value != null ? value + " °C" : "");
+
+                    l = msg.get_humidity();
+                    f = convertLongtoFloatBinary(l);
+                    value = df.format(f);
+                    tsa.setHumidBindR1S2(value != null ? value + " %" : "");
+
+                    l = msg.get_brightness();
+                    value = df.format(f);
+                    tsa.setLightBindR1S2(value != null ? value + " Lux" : "");
+
+                }
+            }
+
+
+
+//            l = msg.get_temperature();
+//            f = convertLongtoFloatBinary(l);
+//            String value = df.format(f);
+//            tsa.setTempBindR1S1(value != null ? value + " °C" : "");
+//
+//            l = msg.get_humidity();
+//            f = convertLongtoFloatBinary(l);
+//            value = df.format(f);
+//            tsa.setHumidBindR1S1(value != null ? value + " %" : "");
+//
+//            l = msg.get_brightness();
+//            value = df.format(f);
+//            tsa.setLightBindR1S1(value != null ? value + " Lux" : "");
         }
     }
 
