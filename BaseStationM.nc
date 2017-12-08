@@ -16,24 +16,24 @@ module BaseStationM {
     interface Leds;
 
     // Timer module
-		interface Timer<TMilli> as Timer0;
-		interface Timer<TMilli> as Timer1;
-		interface Timer<TMilli> as Timer2;
+    interface Timer<TMilli> as Timer0;
+    interface Timer<TMilli> as Timer1;
+    interface Timer<TMilli> as Timer2;
 
     // Temperature and humidity sensors
-		interface Read<u_int16_t> as TempRead;
-		interface Read<u_int16_t> as HumidityRead;
+    interface Read<u_int16_t> as TempRead;
+    interface Read<u_int16_t> as HumidityRead;
 
     // light, voltage sensor
-		interface Read<u_int16_t> as LightRead;
-		interface Read<u_int16_t> as VoltageRead;
+    interface Read<u_int16_t> as LightRead;
+    interface Read<u_int16_t> as VoltageRead;
 
-		// radio interface sensor
-		interface SplitControl as RadioControl;
-		interface Receive as RadioReceive;
-		interface AMSend as RadioAMSend;
-		interface Packet as RadioPacket;
-		interface AMPacket as RadioAMPacket;
+    // radio interface sensor
+    interface SplitControl as RadioControl;
+    interface Receive as RadioReceive;
+    interface AMSend as RadioAMSend;
+    interface Packet as RadioPacket;
+    interface AMPacket as RadioAMPacket;
 
     interface SplitControl as SerialControl;
     interface Receive as SerialReceive;
@@ -61,6 +61,7 @@ implementation {
 
   // to test serial port msg
   uint16_t counter = 0;
+  float f = -3.5;
 
   /***
    * FUNCTIONS TO LISTEN AND COMMUNICATE WITH sensors
@@ -98,7 +99,7 @@ implementation {
 
 	// send a message by serial port
 	int sendSerial(){
-    float f = -3.5;
+        f++;
 		counter++;
 		if (lockedSerial) {
 			 return -1;

@@ -1,19 +1,15 @@
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import net.tinyos.message.*;
 import net.tinyos.packet.*;
 import net.tinyos.util.*;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 public class TinySmartAutomation implements MessageListener {
 
   private MoteIF moteIF;
+  private TSARooms tsa;
 
   public TinySmartAutomation(MoteIF moteIF) {
     this.moteIF = moteIF;
@@ -21,15 +17,15 @@ public class TinySmartAutomation implements MessageListener {
   }
 
   public void sendPackets() {
-    int counter = 0;
+    short roomID = 0;
     TinySmartAutomationMsg payload = new TinySmartAutomationMsg();
 
     try {
       while (true) {
-        System.out.println("Sending packet " + counter);
-        //payload.set_counter(counter);
+        System.out.println("Sending packet " + roomID);
+        payload.set_roomID(roomID);
         moteIF.send(0, payload);
-        counter++;
+        roomID++;
         try {
           Thread.sleep(1000);
         } catch (InterruptedException exception) {
@@ -70,7 +66,18 @@ public class TinySmartAutomation implements MessageListener {
 
     l = msg.get_temperature();
     f = convertLongtoFloatBinary(l);
-    System.out.println(f);
+    String temp = Float.toString(f);
+    tsa.setTempBindR1S1("°C : "+temp);
+
+    l = msg.get_humidity();
+    f = convertLongtoFloatBinary(l);
+    temp = Float.toString(f);
+    tsa.setHumidBindR1S1("% : "+temp);
+
+    l = msg.get_brightness();
+    f = convertLongtoFloatBinary(l);
+    temp = Float.toString(f);
+    tsa.setLightBindR1S1("Lumens : "+temp);
   }
 
   private static void usage() {
@@ -100,29 +107,17 @@ public class TinySmartAutomation implements MessageListener {
 
     MoteIF mif = new MoteIF(phoenix);
     TinySmartAutomation serial = new TinySmartAutomation(mif);
-    // serial.sendPackets();
-
-    TinySmartAutomation.initWindow();
+    serial.initWindow();
+//    serial.sendPackets();
 
   }
 
-  public static void initWindow() {
-    JFrame frame;
-    JPanel main = new JPanel(new BorderLayout());
+  public void initWindow() {
 
-    main.setMinimumSize(new Dimension(500, 250));
-    main.setPreferredSize(new Dimension(800, 400));
+    tsa = new TSARooms();
+    tsa.setVisible(true);
 
-    // The frame part
-    frame = new JFrame("Oscilloscope");
-    frame.setSize(main.getPreferredSize());
-    frame.getContentPane().add(main);
-    frame.setVisible(true);
-    // frame.addWindowListener(new WindowAdapter() {
-    //   public void windowClosing(WindowEvent e) {
-    //     System.exit(0);
-    //   }
-    // });
+    tsa.setTempBindR1S1("modifié");
 
     System.out.println("hélène ! pouit ! panda !");
   }
