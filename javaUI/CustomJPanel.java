@@ -93,4 +93,15 @@ public class CustomJPanel extends JPanel {
         }
     }
 
+    public void setTempBind (String tempBind) {
+        this.tempBind.setText(tempBind);
+    }
+
+    public void setHumidBind(String humidBind) {
+        this.humidBind.setText(humidBind);
+    }
+
+    public void setLightBind(String lightBind) {
+        this.lightBind.setText(lightBind);
+    }
 }

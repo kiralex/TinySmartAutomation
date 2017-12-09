@@ -64,7 +64,9 @@ implementation {
 				 return -1;
 			 }
 
-       sensorID = TOS_NODE_ID;
+        // get the number of unity
+       sensorID = TOS_NODE_ID % 10;
+       roomID = TOS_NODE_ID / 10;
 
 			 memcpy(&rcmSend->sensorID, &sensorID, sizeof(nx_uint8_t));
        memcpy(&rcmSend->roomID, &roomID, sizeof(nx_uint8_t));
@@ -95,10 +97,8 @@ implementation {
       call LightRead.read();
       call VoltageRead.read();
 
-      /*printf ("\n----------slave----------\n\n");*/
       sendSensorsInformation();
-
-      call Leds.led1Toggle();
+      call Leds.led0Toggle();
     }
   }
 
@@ -106,9 +106,6 @@ implementation {
     if(enabled){
       if (result == SUCCESS) {
         temperature = convertVoltToTemperature(val);
-        /*printf ("Temperature : ");
-        printfFloat(temperature);
-        printf (" C\n");*/
       } else
         printf ("Error in temperature getting\n");
     }
@@ -116,14 +113,10 @@ implementation {
 
   event void HumidityRead.readDone(error_t result, u_int16_t val){
     if(enabled){
-      if (result == SUCCESS) {
-        humidity = convertVoltToHumidity(val);
-        /*printf ("Humidity : ");
-        printfFloat(humidity);
-        printf (" %%\n");*/
-      } else
-        printf ("Error in humidity getting\n");
-
+          if (result == SUCCESS) {
+            humidity = convertVoltToHumidity(val);
+            printf ("Error in humidity getting\n");
+        }
     }
   }
 
@@ -131,9 +124,6 @@ implementation {
     if(enabled){
       if (result == SUCCESS) {
         brightness = convertVoltToLight(val);
-        /*printf ("Light : ");
-        printfFloat(brightness);
-        printf (" Lux\n");*/
       } else {
         printf ("Error in light getting\n");
       }
@@ -144,9 +134,6 @@ implementation {
     if(enabled){
       if (result == SUCCESS) {
         voltage = convertVoltageToVolt(val);
-        /*printf ("Voltage : ");
-        printfFloat(voltage);
-        printf (" Volt\n");*/
       } else {
         printf ("Error in Voltage getting\n");
       }

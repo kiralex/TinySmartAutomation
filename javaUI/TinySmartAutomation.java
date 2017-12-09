@@ -75,40 +75,36 @@ public class TinySmartAutomation implements MessageListener {
             df = new DecimalFormat();
             df.setMaximumFractionDigits(2);
 
-//            if (roomID == 1) {
-//                if (sensorID == 11) {
-//                    l = msg.get_temperature();
-//                    f = convertLongtoFloatBinary(l);
-//                    String value = df.format(f);
-//                    tsaCustom.setTempBindR1S1(value != null ? value + " °C" : "");
-//
-//                    l = msg.get_humidity();
-//                    f = convertLongtoFloatBinary(l);
-//                    value = df.format(f);
-//                    tsaCustom.setHumidBindR1S1(value != null ? value + " %" : "");
-//
-//                    l = msg.get_brightness();
-//                    f = convertLongtoFloatBinary(l);
-//                    value = df.format(f);
-//                    tsaCustom.setLightBindR1S1(value != null ? value + " Lux" : "");
-//                } else if ( sensorID == 12) {
-//                    l = msg.get_temperature();
-//                    f = convertLongtoFloatBinary(l);
-//                    String value = df.format(f);
-//                    tsaCustom.setTempBindR1S2(value != null ? value + " °C" : "");
-//
-//                    l = msg.get_humidity();
-//                    f = convertLongtoFloatBinary(l);
-//                    value = df.format(f);
-//                    tsaCustom.setHumidBindR1S2(value != null ? value + " %" : "");
-//
-//                    l = msg.get_brightness();
-//                    f = convertLongtoFloatBinary(l);
-//                    value = df.format(f);
-//                    tsaCustom.setLightBindR1S2(value != null ? value + " Lux" : "");
-//
-//                }
-//            }
+
+            // Add the room inside gui
+            if (!tsaCustom.isRoomInsideFrame(roomID)) {
+                tsaCustom.addRoom(roomID);
+            }
+            // Add the sensor inside GUI
+            try {
+                if (!tsaCustom.isSensorInsideRoom(sensorID, roomID)) {
+                    tsaCustom.addSensor(roomID, sensorID);
+                }
+            } catch (InvalideRoomException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+
+            l = msg.get_temperature();
+            f = convertLongtoFloatBinary(l);
+            String value = df.format(f);
+            tsaCustom.sensorArray.get(roomID).get(sensorID).setTempBind(value != null ? value + " °C" : "");
+
+            l = msg.get_humidity();
+            f = convertLongtoFloatBinary(l);
+            value = df.format(f);
+            tsaCustom.sensorArray.get(roomID).get(sensorID).setHumidBind(value != null ? value + " %" : "");
+
+            l = msg.get_brightness();
+            f = convertLongtoFloatBinary(l);
+            value = df.format(f);
+            tsaCustom.sensorArray.get(roomID).get(sensorID).setLightBind(value != null ? value + " Lux" : "");
+
 
 
 

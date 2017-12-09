@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class TSARooms_custom extends JFrame {
     public static int INITIAL_ROOM_NUMBER = 10;
-    public static int INITIAL_SENSOR_BY_ROOM_NUMBER = 10;
+    public static int INITIAL_SENSOR_BY_ROOM_NUMBER = 20;
 
     // Parent container
     private JScrollPane scrollPane1;
@@ -23,13 +23,51 @@ public class TSARooms_custom extends JFrame {
     public ArrayList<ArrayList<CustomJPanel>> sensorArray;
 
 
+    /***************************
+     * METHOD IMPLEMENTATION
+     **************************/
+
     public TSARooms_custom() {
         initDummySensorArray();
         initDummyRoomSensorsArray();
         initComponents();
+    }
 
-        this.addSensor(1,1);
-        this.addTab(1);
+    /**
+     * True if c is in the main window
+     * @param sensorID index of sensor inside sensorArray sublist
+     * @param roomID index of room inside roomSensorsArray
+     * @return
+     */
+    public boolean isSensorInsideRoom ( int sensorID, int roomID) throws InvalideRoomException {
+        CustomJPanel sensor;
+        JTabbedPane room;
+
+        // Check if sensor is create in this array
+        if (this.sensorArray.get(roomID).get(sensorID) != null)
+            sensor = this.sensorArray.get(roomID).get(sensorID);
+        else
+            return false;
+
+        // Check if room is create in this array
+        if (this.roomSensorsArray.get(roomID) != null)
+            room = this.roomSensorsArray.get(roomID);
+        else
+            throw new InvalideRoomException("Pièce " + roomID + " non créer");
+
+        return sensor.getParent() == room;
+    }
+
+    public boolean isRoomInsideFrame ( int roomID) {
+        JTabbedPane room;
+
+        // Check if room is create in this array
+        if (this.roomSensorsArray.get(roomID) != null)
+            room = this.roomSensorsArray.get(roomID);
+        else
+            return false;
+
+        return room.getParent() == this.frame1;
     }
 
 
@@ -46,19 +84,19 @@ public class TSARooms_custom extends JFrame {
     }
 
 
-    public void addSensor(int roomID, int sensorID) {
+    public void addSensor(int roomID, int sensorID) throws InvalideRoomException {
         CustomJPanel sensor = this.sensorArray.get(roomID).get(sensorID);
         JTabbedPane room = this.roomSensorsArray.get(roomID);
-        if (sensor.getParent() == room) {
+        if (isSensorInsideRoom(sensorID, roomID)) {
             System.err.println("La pièce " + roomID + " contient déjà le capteur N° " + sensorID);
         } else {
             room.addTab("Capteur " + sensorID, sensor);
         }
     }
 
-    public void addTab(int roomID) {
+    public void addRoom(int roomID) {
         JTabbedPane room = this.roomSensorsArray.get(roomID);
-        if (room.getParent() == frame1) {
+        if (isRoomInsideFrame(roomID)) {
             System.err.println("L'application contient déjà la pièce N° " + roomID);
         } else {
             frame1.add(room);
