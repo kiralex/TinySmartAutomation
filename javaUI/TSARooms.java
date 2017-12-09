@@ -1,6 +1,6 @@
-import java.awt.*;
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 /*
  * Created by JFormDesigner on Thu Dec 07 09:33:27 CET 2017
  */
@@ -11,6 +11,7 @@ import javax.swing.border.*;
  * @author unknown
  */
 public class TSARooms extends JFrame {
+
     public TSARooms() {
         initComponents();
     }
@@ -392,7 +393,6 @@ public class TSARooms extends JFrame {
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
-
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - stephane poirier
     private JScrollPane scrollPane1;

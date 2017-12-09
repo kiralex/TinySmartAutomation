@@ -2,6 +2,7 @@ import net.tinyos.message.*;
 import net.tinyos.packet.*;
 import net.tinyos.util.*;
 
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -11,7 +12,7 @@ import java.text.DecimalFormat;
 public class TinySmartAutomation implements MessageListener {
 
     private MoteIF moteIF;
-    private TSARooms tsa;
+    private TSARooms_custom tsaCustom;
     private boolean GUIStarted = false;
 
     public TinySmartAutomation(MoteIF moteIF) {
@@ -74,54 +75,56 @@ public class TinySmartAutomation implements MessageListener {
             df = new DecimalFormat();
             df.setMaximumFractionDigits(2);
 
-            if (roomID == 1) {
-                if (sensorID == 11) {
-                    l = msg.get_temperature();
-                    f = convertLongtoFloatBinary(l);
-                    String value = df.format(f);
-                    tsa.setTempBindR1S1(value != null ? value + " °C" : "");
-
-                    l = msg.get_humidity();
-                    f = convertLongtoFloatBinary(l);
-                    value = df.format(f);
-                    tsa.setHumidBindR1S1(value != null ? value + " %" : "");
-
-                    l = msg.get_brightness();
-                    value = df.format(f);
-                    tsa.setLightBindR1S1(value != null ? value + " Lux" : "");
-                } else if ( sensorID == 12) {
-                    l = msg.get_temperature();
-                    f = convertLongtoFloatBinary(l);
-                    String value = df.format(f);
-                    tsa.setTempBindR1S2(value != null ? value + " °C" : "");
-
-                    l = msg.get_humidity();
-                    f = convertLongtoFloatBinary(l);
-                    value = df.format(f);
-                    tsa.setHumidBindR1S2(value != null ? value + " %" : "");
-
-                    l = msg.get_brightness();
-                    value = df.format(f);
-                    tsa.setLightBindR1S2(value != null ? value + " Lux" : "");
-
-                }
-            }
+//            if (roomID == 1) {
+//                if (sensorID == 11) {
+//                    l = msg.get_temperature();
+//                    f = convertLongtoFloatBinary(l);
+//                    String value = df.format(f);
+//                    tsaCustom.setTempBindR1S1(value != null ? value + " °C" : "");
+//
+//                    l = msg.get_humidity();
+//                    f = convertLongtoFloatBinary(l);
+//                    value = df.format(f);
+//                    tsaCustom.setHumidBindR1S1(value != null ? value + " %" : "");
+//
+//                    l = msg.get_brightness();
+//                    f = convertLongtoFloatBinary(l);
+//                    value = df.format(f);
+//                    tsaCustom.setLightBindR1S1(value != null ? value + " Lux" : "");
+//                } else if ( sensorID == 12) {
+//                    l = msg.get_temperature();
+//                    f = convertLongtoFloatBinary(l);
+//                    String value = df.format(f);
+//                    tsaCustom.setTempBindR1S2(value != null ? value + " °C" : "");
+//
+//                    l = msg.get_humidity();
+//                    f = convertLongtoFloatBinary(l);
+//                    value = df.format(f);
+//                    tsaCustom.setHumidBindR1S2(value != null ? value + " %" : "");
+//
+//                    l = msg.get_brightness();
+//                    f = convertLongtoFloatBinary(l);
+//                    value = df.format(f);
+//                    tsaCustom.setLightBindR1S2(value != null ? value + " Lux" : "");
+//
+//                }
+//            }
 
 
 
 //            l = msg.get_temperature();
 //            f = convertLongtoFloatBinary(l);
 //            String value = df.format(f);
-//            tsa.setTempBindR1S1(value != null ? value + " °C" : "");
+//            tsaCustom.setTempBindR1S1(value != null ? value + " °C" : "");
 //
 //            l = msg.get_humidity();
 //            f = convertLongtoFloatBinary(l);
 //            value = df.format(f);
-//            tsa.setHumidBindR1S1(value != null ? value + " %" : "");
+//            tsaCustom.setHumidBindR1S1(value != null ? value + " %" : "");
 //
 //            l = msg.get_brightness();
 //            value = df.format(f);
-//            tsa.setLightBindR1S1(value != null ? value + " Lux" : "");
+//            tsaCustom.setLightBindR1S1(value != null ? value + " Lux" : "");
         }
     }
 
@@ -159,9 +162,14 @@ public class TinySmartAutomation implements MessageListener {
 
     public void initWindow() {
 
-        tsa = new TSARooms();
-        tsa.setVisible(true);
+//        tsaCustom = new TSARooms();
+//        tsaCustom.setVisible(true);
+//        this.GUIStarted = true;
+
+        tsaCustom = new TSARooms_custom();
+        tsaCustom.setVisible(true);
         this.GUIStarted = true;
+
         System.out.println("Interface graphique lancée");
     }
 
