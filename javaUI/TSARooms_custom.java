@@ -2,19 +2,15 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.ArrayList;
-        /*
-         * Created by JFormDesigner on Thu Dec 07 09:33:27 CET 2017
-         */
-
 
 /**
  * @author unknown
  */
 public class TSARooms_custom extends JFrame {
     public static int INITIAL_ROOM_NUMBER = 10;
-    public static int INITIAL_SENSOR_BY_ROOM_NUMBER = 20;
+    public static int INITIAL_SENSOR_BY_ROOM_NUMBER = 10;
 
-    // Parent container
+    // Parents container
     private JScrollPane scrollPane1;
     private JPanel frame1;
     // Array of JTabbedPane which is the rooms container
