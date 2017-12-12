@@ -132,21 +132,15 @@ public class TinySmartAutomation implements MessageListener {
         MoteIF mif = new MoteIF(phoenix);
         TinySmartAutomation serial = new TinySmartAutomation(mif);
         serial.initWindow();
-//    serial.sendPackets();
 
     }
 
     public void initWindow() {
-
-//        tsaCustom = new TSARooms();
-//        tsaCustom.setVisible(true);
-//        this.GUIStarted = true;
-
         tsaCustom = new TSARooms_custom();
         tsaCustom.setVisible(true);
         this.GUIStarted = true;
 
-        System.out.println("Interface graphique lancée");
+        System.out.println(" ============================= \n Interface graphique lancée \n =============================");
     }
 
 }

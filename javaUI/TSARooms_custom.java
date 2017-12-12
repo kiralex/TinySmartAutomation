@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * @author unknown
+ * @author Stéphane Poirier
  */
 public class TSARooms_custom extends JFrame {
     public static int INITIAL_ROOM_NUMBER = 10;
@@ -19,7 +19,7 @@ public class TSARooms_custom extends JFrame {
     // Array of JPane = sensor. sensorArray[1][2] sensor 2 of room 1
     public ArrayList<ArrayList<CustomJPanel>> sensorArray;
 
-    public HashMap<Integer, CustomJPanel> meanPanel;
+    public HashMap<Integer, CustomJPanel> meanTab;
 
 
     /***************************
@@ -27,7 +27,7 @@ public class TSARooms_custom extends JFrame {
      **************************/
 
     public TSARooms_custom() {
-        meanPanel = new HashMap<>();
+        meanTab = new HashMap<>();
 
         initDummySensorArray();
         initDummyRoomSensorsArray();
@@ -123,8 +123,8 @@ public class TSARooms_custom extends JFrame {
         for (int i =0; i < INITIAL_ROOM_NUMBER; i++) {
             this.roomSensorsArray.add(createEmptyTabbedPane(i));
             // add mean panel tab
-            meanPanel.put(i, new CustomJPanel());
-            this.roomSensorsArray.get(i).addTab("Moyenne", meanPanel.get(i));
+            meanTab.put(i, new CustomJPanel());
+            this.roomSensorsArray.get(i).addTab("Moyenne", meanTab.get(i));
         }
     }
     private void initComponents() {
@@ -208,13 +208,11 @@ public class TSARooms_custom extends JFrame {
             } catch (NumberFormatException ex) {
                 // Not a float
             }
-
-
         }
 
-
-        meanPanel.get(roomID).setTempBind(temp/tempCpt);
-        meanPanel.get(roomID).setHumidBind(humid/humidCpt);
-        meanPanel.get(roomID).setBrightBind(bright/brightCpt);
+        // Set value into mean tab
+        meanTab.get(roomID).setTempBind(temp/tempCpt);
+        meanTab.get(roomID).setHumidBind(humid/humidCpt);
+        meanTab.get(roomID).setBrightBind(bright/brightCpt);
     }
 }

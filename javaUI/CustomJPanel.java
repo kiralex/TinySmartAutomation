@@ -16,6 +16,7 @@ public class CustomJPanel extends JPanel {
     private JLabel humidBind;
     private JLabel brightBind;
 
+    // Value of the bind label
     private float tempValue;
     private float humidValue;
     private float brightValue;
