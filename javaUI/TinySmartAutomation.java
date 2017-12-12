@@ -1,13 +1,13 @@
-import net.tinyos.message.*;
-import net.tinyos.packet.*;
-import net.tinyos.util.*;
-
+import net.tinyos.message.Message;
+import net.tinyos.message.MessageListener;
+import net.tinyos.message.MoteIF;
+import net.tinyos.packet.BuildSource;
+import net.tinyos.packet.PhoenixSource;
+import net.tinyos.util.PrintStreamMessenger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
-import java.text.DecimalFormat;
 
 public class TinySmartAutomation implements MessageListener {
 
@@ -45,7 +45,7 @@ public class TinySmartAutomation implements MessageListener {
      * Convert long to float using binary represenation
      * (because Serial message from TOS only allow int8, int16, int32.
      * So, to put a flot, we use memcpy to copy float in int32)
-     * @param  long x long to convert to float
+     * @param  source x long to convert to float
      * @return float nomber corresponding to source bytes
      */
     public float convertLongtoFloatBinary(long source) {
@@ -68,13 +68,9 @@ public class TinySmartAutomation implements MessageListener {
             long l;
             float f;
             short sensorID, roomID;
-            DecimalFormat df;
 
             sensorID = msg.get_sensorID();
             roomID = msg.get_roomID();
-            df = new DecimalFormat();
-            df.setMaximumFractionDigits(2);
-
 
             // Add the room inside gui
             if (!tsaCustom.isRoomInsideFrame(roomID)) {
@@ -90,37 +86,21 @@ public class TinySmartAutomation implements MessageListener {
                 e.printStackTrace();
             }
 
+            // Bind value into GUI
             l = msg.get_temperature();
             f = convertLongtoFloatBinary(l);
-            String value = df.format(f);
-            tsaCustom.sensorArray.get(roomID).get(sensorID).setTempBind(value != null ? value + " °C" : "");
+            tsaCustom.sensorArray.get(roomID).get(sensorID).setTempBind(f);
 
             l = msg.get_humidity();
             f = convertLongtoFloatBinary(l);
-            value = df.format(f);
-            tsaCustom.sensorArray.get(roomID).get(sensorID).setHumidBind(value != null ? value + " %" : "");
+            tsaCustom.sensorArray.get(roomID).get(sensorID).setHumidBind(f);
 
             l = msg.get_brightness();
             f = convertLongtoFloatBinary(l);
-            value = df.format(f);
-            tsaCustom.sensorArray.get(roomID).get(sensorID).setLightBind(value != null ? value + " Lux" : "");
+            tsaCustom.sensorArray.get(roomID).get(sensorID).setBrightBind(f);
 
-
-
-
-//            l = msg.get_temperature();
-//            f = convertLongtoFloatBinary(l);
-//            String value = df.format(f);
-//            tsaCustom.setTempBindR1S1(value != null ? value + " °C" : "");
-//
-//            l = msg.get_humidity();
-//            f = convertLongtoFloatBinary(l);
-//            value = df.format(f);
-//            tsaCustom.setHumidBindR1S1(value != null ? value + " %" : "");
-//
-//            l = msg.get_brightness();
-//            value = df.format(f);
-//            tsaCustom.setLightBindR1S1(value != null ? value + " Lux" : "");
+            // Bind mean tab value
+            tsaCustom.doMeanRoom(roomID);
         }
     }
 

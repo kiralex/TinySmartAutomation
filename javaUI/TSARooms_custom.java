@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author unknown
@@ -18,12 +19,16 @@ public class TSARooms_custom extends JFrame {
     // Array of JPane = sensor. sensorArray[1][2] sensor 2 of room 1
     public ArrayList<ArrayList<CustomJPanel>> sensorArray;
 
+    public HashMap<Integer, CustomJPanel> meanPanel;
+
 
     /***************************
      * METHOD IMPLEMENTATION
      **************************/
 
     public TSARooms_custom() {
+        meanPanel = new HashMap<>();
+
         initDummySensorArray();
         initDummyRoomSensorsArray();
         initComponents();
@@ -76,6 +81,7 @@ public class TSARooms_custom extends JFrame {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setBorder(new TitledBorder("Pi\u00e8ce " + roomNb));
         tabbedPane.setMinimumSize(new Dimension(150, 153));
+
         return tabbedPane;
     }
 
@@ -104,7 +110,6 @@ public class TSARooms_custom extends JFrame {
         for (int i = 0; i < INITIAL_ROOM_NUMBER; i++) {
             // For intiate rooms array with dummy elements
             ArrayList<CustomJPanel> dummyList = new ArrayList<>();
-
             for (int j = 0; j < INITIAL_SENSOR_BY_ROOM_NUMBER; j++)
                 // For initiate sensors subarray with dummy elements
                 dummyList.add(new CustomJPanel());
@@ -117,6 +122,9 @@ public class TSARooms_custom extends JFrame {
         this.roomSensorsArray = new ArrayList<>();
         for (int i =0; i < INITIAL_ROOM_NUMBER; i++) {
             this.roomSensorsArray.add(createEmptyTabbedPane(i));
+            // add mean panel tab
+            meanPanel.put(i, new CustomJPanel());
+            this.roomSensorsArray.get(i).addTab("Moyenne", meanPanel.get(i));
         }
     }
     private void initComponents() {
@@ -163,5 +171,50 @@ public class TSARooms_custom extends JFrame {
         );
         pack();
         setLocationRelativeTo(getOwner());
+    }
+
+    public void doMeanRoom (int roomID) {
+        float temp = 0, humid = 0, bright = 0;
+        int tempCpt = 0, humidCpt = 0, brightCpt = 0;
+
+        for (int i = 0; i < INITIAL_SENSOR_BY_ROOM_NUMBER; i++) {
+            CustomJPanel cj = this.sensorArray.get(roomID).get(i);
+            // Temp
+            try {
+                if (cj.getTempValue() > -99) {
+                    temp += cj.getTempValue();
+                    tempCpt++;
+                }
+            } catch (NumberFormatException ex) {
+                // Not a float
+            }
+
+            // Humid
+            try {
+                if (cj.getHumidValue() > -99) {
+                    humid += cj.getHumidValue();
+                    humidCpt++;
+                }
+            } catch (NumberFormatException ex) {
+                // Not a float
+            }
+
+            // Bright
+            try {
+                if (cj.getBrightValue() > -99) {
+                    bright += cj.getBrightValue();
+                    brightCpt++;
+                }
+            } catch (NumberFormatException ex) {
+                // Not a float
+            }
+
+
+        }
+
+
+        meanPanel.get(roomID).setTempBind(temp/tempCpt);
+        meanPanel.get(roomID).setHumidBind(humid/humidCpt);
+        meanPanel.get(roomID).setBrightBind(bright/brightCpt);
     }
 }
