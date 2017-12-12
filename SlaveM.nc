@@ -16,22 +16,22 @@ module SlaveM {
     interface Leds;
 
     // Timer module
-		interface Timer<TMilli> as Timer0;
+    interface Timer<TMilli> as Timer0;
 
     // Temperature and humidity sensors
-		interface Read<u_int16_t> as TempRead;
-		interface Read<u_int16_t> as HumidityRead;
+    interface Read<u_int16_t> as TempRead;
+    interface Read<u_int16_t> as HumidityRead;
 
     // light, voltage sensor
-		interface Read<u_int16_t> as LightRead;
-		interface Read<u_int16_t> as VoltageRead;
+    interface Read<u_int16_t> as LightRead;
+    interface Read<u_int16_t> as VoltageRead;
 
-		// radio interface sensor
-		interface SplitControl as RadioControl;
-		interface Receive as RadioReceive;
-		interface AMSend as RadioAMSend;
-		interface Packet as RadioPacket;
-		interface AMPacket as RadioAMPacket;
+    // radio interface sensor
+    interface SplitControl as RadioControl;
+    interface Receive as RadioReceive;
+    interface AMSend as RadioAMSend;
+    interface Packet as RadioPacket;
+    interface AMPacket as RadioAMPacket;
   }
   provides{
     interface SwitchInterface;
@@ -48,38 +48,41 @@ implementation {
   float temperature = -1;
   float brightness = -1;
   float voltage = -1;
-  uint8_t roomID = 0;
+  uint8_t roomID = 1;
   uint8_t sensorID = -1;
 
-/***
+    /***
 	* My OWN FUNCTIONS
 	*/
-	int sendSensorsInformation(){
-		if (lockedRadio)
-			 return -1;
-		else {
-			 rcmSend = (radio_msg_t*)call RadioPacket.getPayload(&packetRadio, sizeof(radio_msg_t));
-			 if (rcmSend == NULL) {
-				 printf("La taille des donnees est trop grande\n");
-				 return -1;
-			 }
+    int sendSensorsInformation(){
+        if (lockedRadio)
+         return -1;
+        else {
+            rcmSend = (radio_msg_t*)call RadioPacket.getPayload(&packetRadio, sizeof(radio_msg_t));
+            if (rcmSend == NULL) {
+                printf("La taille des donnees est trop grande\n");
+                return -1;
+            }
 
-       sensorID = TOS_NODE_ID;
+            // get the number of unity
+            sensorID = TOS_NODE_ID % 10;
+            roomID = TOS_NODE_ID / 10;
 
-			 memcpy(&rcmSend->sensorID, &sensorID, sizeof(nx_uint8_t));
-       memcpy(&rcmSend->roomID, &roomID, sizeof(nx_uint8_t));
-       memcpy(&rcmSend->humidity, &humidity, sizeof(nx_uint32_t));
-       memcpy(&rcmSend->brightness, &brightness, sizeof(nx_uint32_t));
-       memcpy(&rcmSend->temperature, &temperature, sizeof(nx_uint32_t));
-       memcpy(&rcmSend->voltage, &voltage, sizeof(nx_uint32_t));
-			 if (call RadioAMSend.send(AM_BROADCAST_ADDR, &packetRadio, sizeof(radio_msg_t)) == SUCCESS) {
-				 lockedRadio = TRUE;
-				 return 0;
-			 }else
-				 return -1;
+            memcpy(&rcmSend->sensorID, &sensorID, sizeof(nx_uint8_t));
+            memcpy(&rcmSend->roomID, &roomID, sizeof(nx_uint8_t));
+            memcpy(&rcmSend->humidity, &humidity, sizeof(nx_uint32_t));
+            memcpy(&rcmSend->brightness, &brightness, sizeof(nx_uint32_t));
+            memcpy(&rcmSend->temperature, &temperature, sizeof(nx_uint32_t));
+            memcpy(&rcmSend->voltage, &voltage, sizeof(nx_uint32_t));
 
-		 }
-	}
+            if (call RadioAMSend.send(AM_BROADCAST_ADDR, &packetRadio, sizeof(radio_msg_t)) == SUCCESS) {
+                lockedRadio = TRUE;
+                return 0;
+            }else
+                return -1;
+
+        }
+    }
 
   command void SwitchInterface.start(){
     call Leds.led0On();
@@ -95,10 +98,8 @@ implementation {
       call LightRead.read();
       call VoltageRead.read();
 
-      /*printf ("\n----------slave----------\n\n");*/
       sendSensorsInformation();
-
-      call Leds.led1Toggle();
+      call Leds.led0Toggle();
     }
   }
 
@@ -106,9 +107,6 @@ implementation {
     if(enabled){
       if (result == SUCCESS) {
         temperature = convertVoltToTemperature(val);
-        /*printf ("Temperature : ");
-        printfFloat(temperature);
-        printf (" C\n");*/
       } else
         printf ("Error in temperature getting\n");
     }
@@ -116,14 +114,10 @@ implementation {
 
   event void HumidityRead.readDone(error_t result, u_int16_t val){
     if(enabled){
-      if (result == SUCCESS) {
-        humidity = convertVoltToHumidity(val);
-        /*printf ("Humidity : ");
-        printfFloat(humidity);
-        printf (" %%\n");*/
-      } else
-        printf ("Error in humidity getting\n");
-
+          if (result == SUCCESS) {
+            humidity = convertVoltToHumidity(val);
+            printf ("Error in humidity getting\n");
+        }
     }
   }
 
@@ -131,9 +125,6 @@ implementation {
     if(enabled){
       if (result == SUCCESS) {
         brightness = convertVoltToLight(val);
-        /*printf ("Light : ");
-        printfFloat(brightness);
-        printf (" Lux\n");*/
       } else {
         printf ("Error in light getting\n");
       }
@@ -144,9 +135,6 @@ implementation {
     if(enabled){
       if (result == SUCCESS) {
         voltage = convertVoltageToVolt(val);
-        /*printf ("Voltage : ");
-        printfFloat(voltage);
-        printf (" Volt\n");*/
       } else {
         printf ("Error in Voltage getting\n");
       }

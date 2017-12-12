@@ -6,7 +6,7 @@ javaUI/TinySmartAutomationMsg.java :
 	nescc-mig java $(CFLAGS) -java-classname=TinySmartAutomationMsg utils.h serial_msg -o $@
 
 javaUI/TinySmartAutomation.class: $(wildcard javaUI/*.java) javaUI/TinySmartAutomationMsg.java
-	javac -target 1.4 -source 1.4 javaUI/*.java
+	javac -target 1.8 -source 1.8 javaUI/*.java
 
 
 # radio Channel emission

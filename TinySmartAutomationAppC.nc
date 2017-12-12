@@ -7,7 +7,6 @@ implementation {
 	components BaseStationM as AppBaseStation; // My base station modules
 	components SlaveM as AppSlave; // My base station modules
 
-	/*components TSASlaveC as AppSlave; // My slave*/
   components BootM as App;
 	components SerialPrintfC; // to use printf
 	components SerialActiveMessageC as Serial; // to serial port

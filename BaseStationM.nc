@@ -35,6 +35,7 @@ module BaseStationM {
     interface Packet as RadioPacket;
     interface AMPacket as RadioAMPacket;
 
+    // serial interface sensor
     interface SplitControl as SerialControl;
     interface Receive as SerialReceive;
     interface AMSend as SerialAMSend;
@@ -42,12 +43,12 @@ module BaseStationM {
   }
 
   provides{
+    // to know base or slave sensor
     interface SwitchInterface;
   }
 }
 implementation {
   message_t packetRadio;
-//  radio_msg_t* rcmRadioReceived;
   radio_msg_t* rcmSend;
   bool lockedRadio = FALSE;
 
@@ -58,17 +59,13 @@ implementation {
 
   bool enabled = FALSE;
 
-  /***
-   * FUNCTIONS TO LISTEN AND COMMUNICATE WITH sensors
-   */
-
   command void SwitchInterface.start(){
     enabled = TRUE;
     call SerialControl.start();
     call RadioControl.start();
   }
 
-/***
+    /***
 	* My OWN FUNCTIONS
 	*/
 	int sendMessage(char * text, int nbChar){
@@ -77,7 +74,6 @@ implementation {
 		 } else {
 			 rcmSend = (radio_msg_t*)call RadioPacket.getPayload(&packetRadio, sizeof(radio_msg_t));
 			 if (rcmSend == NULL) {
-				 //printf("La taille des donnees est trop grande\n");
 				 return -1;
 			 }
 
@@ -90,42 +86,38 @@ implementation {
 		 }
 	}
 
-	// send a message by serial port
-	int sendSerial(radio_msg_t * msg){
-		if (lockedSerial) {
-			 return -1;
-		 } else {
-			 rcmSerialSend = (serial_msg_t*)call SerialPacket.getPayload(&packetSerial, sizeof(serial_msg_t));
-			 if (rcmSerialSend == NULL) {
-				 //printf("La taille des donnees est trop grande\n");
-				 return -1;
-			 }
-			 if (call SerialPacket.maxPayloadLength() < sizeof(serial_msg_t)) {
-				 //printf("La taille des donnees est trop grande (maxpayload)\n");
-				 return -1;
-      }
+    // send a message by serial port
+    int sendSerial(radio_msg_t * msg){
+        if (lockedSerial) {
+            return -1;
+        } else {
+            rcmSerialSend = (serial_msg_t*)call SerialPacket.getPayload(&packetSerial, sizeof(serial_msg_t));
+            if (rcmSerialSend == NULL) {
+                return -1;
+            }
+            if (call SerialPacket.maxPayloadLength() < sizeof(serial_msg_t)) {
+                return -1;
+            }
 
+            memcpy(&rcmSerialSend->temperature, &msg->temperature, sizeof(nx_uint32_t));
+            memcpy(&rcmSerialSend->humidity, &msg->humidity, sizeof(nx_uint32_t));
+            memcpy(&rcmSerialSend->sensorID, &msg->sensorID, sizeof(nx_uint8_t));
+            memcpy(&rcmSerialSend->roomID, &msg->roomID, sizeof(nx_uint8_t));
+            memcpy(&rcmSerialSend->voltage, &msg->voltage, sizeof(nx_uint32_t));
+            memcpy(&rcmSerialSend->brightness, &msg->brightness, sizeof(nx_uint32_t));
 
-			 /*memcpy(rcmSerialSend->text, text, sizeof(char)*nbChar);*/
-       memcpy(&rcmSerialSend->temperature, &msg->temperature, sizeof(nx_uint32_t));
-       memcpy(&rcmSerialSend->humidity, &msg->humidity, sizeof(nx_uint32_t));
-       memcpy(&rcmSerialSend->sensorID, &msg->sensorID, sizeof(nx_uint8_t));
-       memcpy(&rcmSerialSend->roomID, &msg->roomID, sizeof(nx_uint8_t));
-       memcpy(&rcmSerialSend->voltage, &msg->voltage, sizeof(nx_uint32_t));
-       memcpy(&rcmSerialSend->brightness, &msg->brightness, sizeof(nx_uint32_t));
-			 if (call SerialAMSend.send(AM_BROADCAST_ADDR, &packetSerial, sizeof(serial_msg_t)) == SUCCESS) {
-				 lockedSerial = TRUE;
-				 return 0;
-			 }else{
-				 return -1;
-			 }
-		 }
-	}
+            if (call SerialAMSend.send(AM_BROADCAST_ADDR, &packetSerial, sizeof(serial_msg_t)) == SUCCESS) {
+                lockedSerial = TRUE;
+                return 0;
+            }else{
+                return -1;
+            }
+        }
+    }
 
 	// Timers
   event void Timer0.fired() {
     if(enabled){
-
     }
   }
 
@@ -210,7 +202,6 @@ implementation {
 
   event void SerialControl.startDone(error_t err) {
     if (err == SUCCESS) {
-      //call Timer0.startPeriodic(1000);
     }
   }
   event void SerialControl.stopDone(error_t err) {}

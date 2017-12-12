@@ -10,7 +10,7 @@
 module BootM {
   uses interface Boot;
   uses interface SwitchInterface as baseStation; // My base station modules
-  uses interface SwitchInterface as slave; // My base station modules
+  uses interface SwitchInterface as slave; // My slave modules
 }
 implementation {
   event void Boot.booted() {
@@ -24,6 +24,5 @@ implementation {
       call slave.start();
     }
 
-    /*call SerialControl.start();*/
   }
 }
