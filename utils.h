@@ -6,26 +6,26 @@
 
 // max radio message size : 28 Bytes
 typedef nx_struct radio_msg_type {
-								nx_uint8_t sensorID;
-								nx_uint8_t roomID;
-								nx_uint32_t temperature;
-								nx_uint32_t humidity;
-								nx_uint32_t brightness;
-								nx_uint32_t voltage;
+	nx_uint8_t sensorID;
+	nx_uint8_t roomID;
+	nx_uint32_t temperature;
+	nx_uint32_t humidity;
+	nx_uint32_t brightness;
+	nx_uint32_t voltage;
 } radio_msg_t;
 
 typedef nx_struct serial_msg {
-								nx_uint8_t sensorID;
-								nx_uint8_t roomID;
-								nx_uint32_t temperature;
-								nx_uint32_t humidity;
-								nx_uint32_t brightness;
-								nx_uint32_t voltage;
+	nx_uint8_t sensorID;
+	nx_uint8_t roomID;
+	nx_uint32_t temperature;
+	nx_uint32_t humidity;
+	nx_uint32_t brightness;
+	nx_uint32_t voltage;
 } serial_msg_t;
 
 enum {
-								AM_RADIO_MSG = 0xFF,
-								AM_SERIAL_MSG = 0x89,
+	AM_RADIO_MSG = 0xFF,
+	AM_SERIAL_MSG = 0x89,
 };
 
 float convertVoltToHumidity (u_int16_t); // Convert voltage val (humidity) in humidity %

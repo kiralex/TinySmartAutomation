@@ -34,17 +34,6 @@ implementation {
   AppBaseStation.RadioPacket -> AMSenderC;
   AppBaseStation.RadioAMPacket -> Radio;
 
-  // Use timers module, toggle light led
-  AppBaseStation.Timer0 -> Timer0;
-  AppBaseStation.Timer1 -> Timer1;
-  AppBaseStation.Timer2 -> Timer2;
-
-  // Temperature Humidity and light, voltage components voltage value.
-  AppBaseStation.TempRead -> TempAndHumidSensor.Temperature;
-  AppBaseStation.HumidityRead -> TempAndHumidSensor.Humidity;
-  AppBaseStation.LightRead -> LightSensor;
-  AppBaseStation.VoltageRead -> VoltageSensor;
-
   // Load leds manage component
   AppBaseStation.Leds -> LedsC;
 
