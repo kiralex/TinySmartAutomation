@@ -51,38 +51,35 @@ implementation {
   uint8_t roomID = 1;
   uint8_t sensorID = -1;
 
-    /***
-	* My OWN FUNCTIONS
-	*/
-    int sendSensorsInformation(){
-        if (lockedRadio)
-         return -1;
-        else {
-            rcmSend = (radio_msg_t*)call RadioPacket.getPayload(&packetRadio, sizeof(radio_msg_t));
-            if (rcmSend == NULL) {
-                printf("La taille des donnees est trop grande\n");
-                return -1;
-            }
+  int sendSensorsInformation(){
+      if (lockedRadio)
+        return -1;
+      else {
+          rcmSend = (radio_msg_t*)call RadioPacket.getPayload(&packetRadio, sizeof(radio_msg_t));
+          if (rcmSend == NULL) {
+              printf("La taille des donnees est trop grande\n");
+              return -1;
+          }
 
-            // get the number of unity
-            sensorID = TOS_NODE_ID % 10;
-            roomID = TOS_NODE_ID / 10;
+          // get the number of unity
+          sensorID = TOS_NODE_ID % 10;
+          roomID = TOS_NODE_ID / 10;
 
-            memcpy(&rcmSend->sensorID, &sensorID, sizeof(nx_uint8_t));
-            memcpy(&rcmSend->roomID, &roomID, sizeof(nx_uint8_t));
-            memcpy(&rcmSend->humidity, &humidity, sizeof(nx_uint32_t));
-            memcpy(&rcmSend->brightness, &brightness, sizeof(nx_uint32_t));
-            memcpy(&rcmSend->temperature, &temperature, sizeof(nx_uint32_t));
-            memcpy(&rcmSend->voltage, &voltage, sizeof(nx_uint32_t));
+          memcpy(&rcmSend->sensorID, &sensorID, sizeof(nx_uint8_t));
+          memcpy(&rcmSend->roomID, &roomID, sizeof(nx_uint8_t));
+          memcpy(&rcmSend->humidity, &humidity, sizeof(nx_uint32_t));
+          memcpy(&rcmSend->brightness, &brightness, sizeof(nx_uint32_t));
+          memcpy(&rcmSend->temperature, &temperature, sizeof(nx_uint32_t));
+          memcpy(&rcmSend->voltage, &voltage, sizeof(nx_uint32_t));
 
-            if (call RadioAMSend.send(AM_BROADCAST_ADDR, &packetRadio, sizeof(radio_msg_t)) == SUCCESS) {
-                lockedRadio = TRUE;
-                return 0;
-            }else
-                return -1;
+          if (call RadioAMSend.send(AM_BROADCAST_ADDR, &packetRadio, sizeof(radio_msg_t)) == SUCCESS) {
+              lockedRadio = TRUE;
+              return 0;
+          }else
+              return -1;
 
-        }
-    }
+      }
+  }
 
   command void SwitchInterface.start(){
     call Leds.led0On();

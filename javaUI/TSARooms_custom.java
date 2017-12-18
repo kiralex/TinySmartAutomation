@@ -4,9 +4,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * @author Stéphane Poirier
- */
 public class TSARooms_custom extends JFrame {
     public static int INITIAL_ROOM_NUMBER = 10;
     public static int INITIAL_SENSOR_BY_ROOM_NUMBER = 10;
@@ -20,7 +17,6 @@ public class TSARooms_custom extends JFrame {
     public ArrayList<ArrayList<CustomJPanel>> sensorArray;
 
     public HashMap<Integer, CustomJPanel> meanTab;
-
 
     /***************************
      * METHOD IMPLEMENTATION
@@ -40,7 +36,7 @@ public class TSARooms_custom extends JFrame {
      * @param roomID index of room inside roomSensorsArray
      * @return
      */
-    public boolean isSensorInsideRoom ( int sensorID, int roomID) throws InvalideRoomException {
+    public boolean isSensorInsideRoom(int sensorID, int roomID) throws InvalideRoomException {
         CustomJPanel sensor;
         JTabbedPane room;
 
@@ -59,7 +55,7 @@ public class TSARooms_custom extends JFrame {
         return sensor.getParent() == room;
     }
 
-    public boolean isRoomInsideFrame ( int roomID) {
+    public boolean isRoomInsideFrame(int roomID) {
         JTabbedPane room;
 
         // Check if room is create in this array
@@ -71,20 +67,18 @@ public class TSARooms_custom extends JFrame {
         return room.getParent() == this.frame1;
     }
 
-
     /**
      * Make empty tabbedPane with own template feature
      * @param roomNb use in title of JTabbedPane
      * @return
      */
-    private JTabbedPane createEmptyTabbedPane (int roomNb) {
+    private JTabbedPane createEmptyTabbedPane(int roomNb) {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setBorder(new TitledBorder("Pi\u00e8ce " + roomNb));
         tabbedPane.setMinimumSize(new Dimension(150, 153));
 
         return tabbedPane;
     }
-
 
     public void addSensor(int roomID, int sensorID) throws InvalideRoomException {
         CustomJPanel sensor = this.sensorArray.get(roomID).get(sensorID);
@@ -105,7 +99,7 @@ public class TSARooms_custom extends JFrame {
         }
     }
 
-    private void initDummySensorArray () {
+    private void initDummySensorArray() {
         this.sensorArray = new ArrayList<>();
         for (int i = 0; i < INITIAL_ROOM_NUMBER; i++) {
             // For intiate rooms array with dummy elements
@@ -120,13 +114,14 @@ public class TSARooms_custom extends JFrame {
 
     private void initDummyRoomSensorsArray() {
         this.roomSensorsArray = new ArrayList<>();
-        for (int i =0; i < INITIAL_ROOM_NUMBER; i++) {
+        for (int i = 0; i < INITIAL_ROOM_NUMBER; i++) {
             this.roomSensorsArray.add(createEmptyTabbedPane(i));
             // add mean panel tab
             meanTab.put(i, new CustomJPanel());
             this.roomSensorsArray.get(i).addTab("Moyenne", meanTab.get(i));
         }
     }
+
     private void initComponents() {
         scrollPane1 = new JScrollPane();
         frame1 = new JPanel();
@@ -148,10 +143,15 @@ public class TSARooms_custom extends JFrame {
 
                 // JFormDesigner evaluation mark
                 frame1.setBorder(new javax.swing.border.CompoundBorder(
-                        new TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                                "JFormDesigner Evaluation", TitledBorder.CENTER,
-                                TitledBorder.BOTTOM, new Font("Dialog", Font.BOLD, 12),
-                                Color.red), frame1.getBorder())); frame1.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+                        new TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0), "JFormDesigner Evaluation",
+                                TitledBorder.CENTER, TitledBorder.BOTTOM, new Font("Dialog", Font.BOLD, 12), Color.red),
+                        frame1.getBorder()));
+                frame1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+                    public void propertyChange(java.beans.PropertyChangeEvent e) {
+                        if ("border".equals(e.getPropertyName()))
+                            throw new RuntimeException();
+                    }
+                });
 
                 frame1.setLayout(new GridLayout(3, 0));
 
@@ -161,19 +161,15 @@ public class TSARooms_custom extends JFrame {
 
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
-        contentPaneLayout.setHorizontalGroup(
-                contentPaneLayout.createParallelGroup()
-                        .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
-        );
-        contentPaneLayout.setVerticalGroup(
-                contentPaneLayout.createParallelGroup()
-                        .addComponent(scrollPane1, GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE)
-        );
+        contentPaneLayout.setHorizontalGroup(contentPaneLayout.createParallelGroup().addComponent(scrollPane1,
+                GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE));
+        contentPaneLayout.setVerticalGroup(contentPaneLayout.createParallelGroup().addComponent(scrollPane1,
+                GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE));
         pack();
         setLocationRelativeTo(getOwner());
     }
 
-    public void doMeanRoom (int roomID) {
+    public void doMeanRoom(int roomID) {
         float temp = 0, humid = 0, bright = 0;
         int tempCpt = 0, humidCpt = 0, brightCpt = 0;
 
@@ -211,8 +207,8 @@ public class TSARooms_custom extends JFrame {
         }
 
         // Set value into mean tab
-        meanTab.get(roomID).setTempBind(temp/tempCpt);
-        meanTab.get(roomID).setHumidBind(humid/humidCpt);
-        meanTab.get(roomID).setBrightBind(bright/brightCpt);
+        meanTab.get(roomID).setTempBind(temp / tempCpt);
+        meanTab.get(roomID).setHumidBind(humid / humidCpt);
+        meanTab.get(roomID).setBrightBind(bright / brightCpt);
     }
 }

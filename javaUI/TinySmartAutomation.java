@@ -67,41 +67,59 @@ public class TinySmartAutomation implements MessageListener {
             TinySmartAutomationMsg msg = (TinySmartAutomationMsg) message;
             long l;
             float f;
-            short sensorID, roomID;
+            short sensorID;
+            Integer roomID;
 
             sensorID = msg.get_sensorID();
-            roomID = msg.get_roomID();
+            roomID = (int) msg.get_roomID();
 
             // Add the room inside gui
             if (!tsaCustom.isRoomInsideFrame(roomID)) {
                 tsaCustom.addRoom(roomID);
             }
-            // Add the sensor inside GUI
-            try {
-                if (!tsaCustom.isSensorInsideRoom(sensorID, roomID)) {
-                    tsaCustom.addSensor(roomID, sensorID);
+
+            if (sensorID != 254) {
+                // Add the sensor inside GUI
+                try {
+                    if (!tsaCustom.isSensorInsideRoom(sensorID, roomID)) {
+                        tsaCustom.addSensor(roomID, sensorID);
+                    }
+                } catch (InvalideRoomException e) {
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
                 }
-            } catch (InvalideRoomException e) {
-                System.out.println(e.getMessage());
-                e.printStackTrace();
+
+                // Bind value into GUI
+                l = msg.get_temperature();
+                f = convertLongtoFloatBinary(l);
+                tsaCustom.sensorArray.get(roomID).get(sensorID).setTempBind(f);
+
+                l = msg.get_humidity();
+                f = convertLongtoFloatBinary(l);
+                tsaCustom.sensorArray.get(roomID).get(sensorID).setHumidBind(f);
+
+                l = msg.get_brightness();
+                f = convertLongtoFloatBinary(l);
+                tsaCustom.sensorArray.get(roomID).get(sensorID).setBrightBind(f);
+
+                // Bind mean tab value
+                // tsaCustom.doMeanRoom(roomID);
+            } else if (tsaCustom.meanTab.get(roomID) != null) {
+                // Bind value into GUI
+                l = msg.get_temperature();
+                f = convertLongtoFloatBinary(l);
+                tsaCustom.meanTab.get(roomID).setTempBind(f);
+
+                l = msg.get_humidity();
+                f = convertLongtoFloatBinary(l);
+                tsaCustom.meanTab.get(roomID).setHumidBind(f);
+
+                l = msg.get_brightness();
+                f = convertLongtoFloatBinary(l);
+                tsaCustom.meanTab.get(roomID).setBrightBind(f);
             }
-
-            // Bind value into GUI
-            l = msg.get_temperature();
-            f = convertLongtoFloatBinary(l);
-            tsaCustom.sensorArray.get(roomID).get(sensorID).setTempBind(f);
-
-            l = msg.get_humidity();
-            f = convertLongtoFloatBinary(l);
-            tsaCustom.sensorArray.get(roomID).get(sensorID).setHumidBind(f);
-
-            l = msg.get_brightness();
-            f = convertLongtoFloatBinary(l);
-            tsaCustom.sensorArray.get(roomID).get(sensorID).setBrightBind(f);
-
-            // Bind mean tab value
-            tsaCustom.doMeanRoom(roomID);
         }
+
     }
 
     private static void usage() {
@@ -140,7 +158,8 @@ public class TinySmartAutomation implements MessageListener {
         tsaCustom.setVisible(true);
         this.GUIStarted = true;
 
-        System.out.println(" ============================= \n Interface graphique lancée \n =============================");
+        System.out.println(" ============================= \n" + "Interface graphique lancée \n "
+                + "=============================");
     }
 
 }
