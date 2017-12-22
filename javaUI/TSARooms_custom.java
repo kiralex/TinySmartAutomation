@@ -1,8 +1,13 @@
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class TSARooms_custom extends JFrame {
     public static int INITIAL_ROOM_NUMBER = 10;
@@ -12,21 +17,24 @@ public class TSARooms_custom extends JFrame {
     private JScrollPane scrollPane1;
     private JPanel frame1;
     // Array of JTabbedPane which is the rooms container
-    public ArrayList<JTabbedPane> roomSensorsArray;
+    public JTabbedPane[] roomSensorsArray;
     // Array of JPane = sensor. sensorArray[1][2] sensor 2 of room 1
-    public ArrayList<ArrayList<CustomJPanel>> sensorArray;
+    public CustomJPanel[][] sensorArray;
+    // Store last date of send msg of sensor
+    public Date[][] sensorLastMsg;
 
-    public HashMap<Integer, CustomJPanel> meanTab;
+    // array which store mean tab of rooms
+    public CustomJPanel[] meanTab;
 
     /***************************
      * METHOD IMPLEMENTATION
      **************************/
 
     public TSARooms_custom() {
-        meanTab = new HashMap<>();
-
-        initDummySensorArray();
-        initDummyRoomSensorsArray();
+        this.meanTab = new CustomJPanel[INITIAL_ROOM_NUMBER];
+        this.sensorArray = new CustomJPanel[INITIAL_ROOM_NUMBER][INITIAL_SENSOR_BY_ROOM_NUMBER];
+        this.roomSensorsArray = new JTabbedPane[INITIAL_ROOM_NUMBER];
+        this.sensorLastMsg = new Date[INITIAL_ROOM_NUMBER][INITIAL_SENSOR_BY_ROOM_NUMBER];
         initComponents();
     }
 
@@ -41,14 +49,14 @@ public class TSARooms_custom extends JFrame {
         JTabbedPane room;
 
         // Check if sensor is create in this array
-        if (this.sensorArray.get(roomID).get(sensorID) != null)
-            sensor = this.sensorArray.get(roomID).get(sensorID);
+        if (this.sensorArray[roomID][sensorID] != null)
+            sensor = this.sensorArray[roomID][sensorID];
         else
             return false;
 
         // Check if room is create in this array
-        if (this.roomSensorsArray.get(roomID) != null)
-            room = this.roomSensorsArray.get(roomID);
+        if (this.roomSensorsArray[roomID] != null)
+            room = this.roomSensorsArray[roomID];
         else
             throw new InvalideRoomException("Pièce " + roomID + " non créer");
 
@@ -59,8 +67,8 @@ public class TSARooms_custom extends JFrame {
         JTabbedPane room;
 
         // Check if room is create in this array
-        if (this.roomSensorsArray.get(roomID) != null)
-            room = this.roomSensorsArray.get(roomID);
+        if (this.roomSensorsArray[roomID] != null)
+            room = this.roomSensorsArray[roomID];
         else
             return false;
 
@@ -81,44 +89,29 @@ public class TSARooms_custom extends JFrame {
     }
 
     public void addSensor(int roomID, int sensorID) throws InvalideRoomException {
-        CustomJPanel sensor = this.sensorArray.get(roomID).get(sensorID);
-        JTabbedPane room = this.roomSensorsArray.get(roomID);
+        JTabbedPane room = this.roomSensorsArray[roomID];
         if (isSensorInsideRoom(sensorID, roomID)) {
             System.err.println("La pièce " + roomID + " contient déjà le capteur N° " + sensorID);
         } else {
-            room.addTab("Capteur " + sensorID, sensor);
+            // Add new sensor
+            this.sensorArray[roomID][sensorID] = new CustomJPanel();
+            // Add sensor to room
+            room.addTab("Capteur " + sensorID, this.sensorArray[roomID][sensorID]);
         }
     }
 
     public void addRoom(int roomID) {
-        JTabbedPane room = this.roomSensorsArray.get(roomID);
         if (isRoomInsideFrame(roomID)) {
             System.err.println("L'application contient déjà la pièce N° " + roomID);
         } else {
-            frame1.add(room);
-        }
-    }
-
-    private void initDummySensorArray() {
-        this.sensorArray = new ArrayList<>();
-        for (int i = 0; i < INITIAL_ROOM_NUMBER; i++) {
-            // For intiate rooms array with dummy elements
-            ArrayList<CustomJPanel> dummyList = new ArrayList<>();
-            for (int j = 0; j < INITIAL_SENSOR_BY_ROOM_NUMBER; j++)
-                // For initiate sensors subarray with dummy elements
-                dummyList.add(new CustomJPanel());
-
-            this.sensorArray.add(dummyList);
-        }
-    }
-
-    private void initDummyRoomSensorsArray() {
-        this.roomSensorsArray = new ArrayList<>();
-        for (int i = 0; i < INITIAL_ROOM_NUMBER; i++) {
-            this.roomSensorsArray.add(createEmptyTabbedPane(i));
-            // add mean panel tab
-            meanTab.put(i, new CustomJPanel());
-            this.roomSensorsArray.get(i).addTab("Moyenne", meanTab.get(i));
+            // Add new room to array
+            this.roomSensorsArray[roomID] = createEmptyTabbedPane(roomID);
+            // Make mean tab link to room
+            this.meanTab[roomID] = new CustomJPanel();
+            // Add tab to room
+            this.roomSensorsArray[roomID].addTab("Moyenne", meanTab[roomID]);
+            // Add room to the GUI
+            frame1.add(this.roomSensorsArray[roomID]);
         }
     }
 
@@ -174,7 +167,7 @@ public class TSARooms_custom extends JFrame {
         int tempCpt = 0, humidCpt = 0, brightCpt = 0;
 
         for (int i = 0; i < INITIAL_SENSOR_BY_ROOM_NUMBER; i++) {
-            CustomJPanel cj = this.sensorArray.get(roomID).get(i);
+            CustomJPanel cj = this.sensorArray[roomID][i];
             // Temp
             try {
                 if (cj.getTempValue() > -99) {
@@ -207,8 +200,40 @@ public class TSARooms_custom extends JFrame {
         }
 
         // Set value into mean tab
-        meanTab.get(roomID).setTempBind(temp / tempCpt);
-        meanTab.get(roomID).setHumidBind(humid / humidCpt);
-        meanTab.get(roomID).setBrightBind(bright / brightCpt);
+        meanTab[roomID].setTempBind(temp / tempCpt);
+        meanTab[roomID].setHumidBind(humid / humidCpt);
+        meanTab[roomID].setBrightBind(bright / brightCpt);
+    }
+
+    private void updateGUI () {
+        for (int roomID = 0; roomID < INITIAL_ROOM_NUMBER; roomID++) {
+            for (int sensorID = 0; sensorID < INITIAL_SENSOR_BY_ROOM_NUMBER; sensorID++) {
+                Date d = this.sensorLastMsg[roomID][sensorID];
+                if (d != null) {
+                    long MAX_DURATION = MILLISECONDS.convert(5, SECONDS);
+                    long duration = new Date().getTime() - d.getTime();
+                    if (duration >= MAX_DURATION) {
+                        // Sensor not send msg during 5 seconds
+                        this.removeSensor(roomID, sensorID);
+                    }
+                }
+            }
+        }
+    }
+
+    private void removeSensor(int roomID, int sensorID) {
+        this.roomSensorsArray [roomID].remove(this.sensorArray[roomID][sensorID]);
+        this.sensorArray[roomID][sensorID] = null;
+    }
+
+    public void scheduleUpdateGUI() {
+        int interval = 1000;  // iterate every sec.
+        java.util.Timer timer = new Timer();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                updateGUI();
+            }
+        }, 10, interval);
     }
 }

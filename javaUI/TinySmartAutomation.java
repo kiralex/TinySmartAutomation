@@ -8,6 +8,7 @@ import net.tinyos.util.PrintStreamMessenger;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Date;
 
 public class TinySmartAutomation implements MessageListener {
 
@@ -92,32 +93,37 @@ public class TinySmartAutomation implements MessageListener {
                 // Bind value into GUI
                 l = msg.get_temperature();
                 f = convertLongtoFloatBinary(l);
-                tsaCustom.sensorArray.get(roomID).get(sensorID).setTempBind(f);
+                tsaCustom.sensorArray[roomID][sensorID].setTempBind(f);
 
                 l = msg.get_humidity();
                 f = convertLongtoFloatBinary(l);
-                tsaCustom.sensorArray.get(roomID).get(sensorID).setHumidBind(f);
+                tsaCustom.sensorArray[roomID][sensorID].setHumidBind(f);
 
                 l = msg.get_brightness();
                 f = convertLongtoFloatBinary(l);
-                tsaCustom.sensorArray.get(roomID).get(sensorID).setBrightBind(f);
+                tsaCustom.sensorArray[roomID][sensorID].setBrightBind(f);
+
+                // Add date
+                tsaCustom.sensorLastMsg[roomID][sensorID] = new Date();
 
                 // Bind mean tab value
                 // tsaCustom.doMeanRoom(roomID);
-            } else if (tsaCustom.meanTab.get(roomID) != null) {
+            } else if (tsaCustom.meanTab[roomID] != null) {
                 // Bind value into GUI
                 l = msg.get_temperature();
                 f = convertLongtoFloatBinary(l);
-                tsaCustom.meanTab.get(roomID).setTempBind(f);
+                tsaCustom.meanTab[roomID].setTempBind(f);
 
                 l = msg.get_humidity();
                 f = convertLongtoFloatBinary(l);
-                tsaCustom.meanTab.get(roomID).setHumidBind(f);
+                tsaCustom.meanTab[roomID].setHumidBind(f);
 
                 l = msg.get_brightness();
                 f = convertLongtoFloatBinary(l);
-                tsaCustom.meanTab.get(roomID).setBrightBind(f);
+                tsaCustom.meanTab[roomID].setBrightBind(f);
             }
+
+
         }
 
     }
@@ -127,6 +133,8 @@ public class TinySmartAutomation implements MessageListener {
     }
 
     public static void main(String[] args) throws Exception {
+
+//        System.out.println("Date : " + new Date());
         String source = null;
         if (args.length == 2) {
             if (!args[0].equals("-comm")) {
@@ -157,6 +165,8 @@ public class TinySmartAutomation implements MessageListener {
         tsaCustom = new TSARooms_custom();
         tsaCustom.setVisible(true);
         this.GUIStarted = true;
+
+        tsaCustom.scheduleUpdateGUI();
 
         System.out.println(" ============================= \n" + "Interface graphique lancée \n "
                 + "=============================");
