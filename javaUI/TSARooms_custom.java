@@ -6,7 +6,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class TSARooms_custom extends JFrame {
@@ -206,34 +205,57 @@ public class TSARooms_custom extends JFrame {
     }
 
     private void updateGUI () {
+        boolean roomEmpty = true;
         for (int roomID = 0; roomID < INITIAL_ROOM_NUMBER; roomID++) {
             for (int sensorID = 0; sensorID < INITIAL_SENSOR_BY_ROOM_NUMBER; sensorID++) {
                 Date d = this.sensorLastMsg[roomID][sensorID];
                 if (d != null) {
-                    long MAX_DURATION = MILLISECONDS.convert(5, SECONDS);
+                    long MAX_DURATION = MILLISECONDS.convert(1, SECONDS);
                     long duration = new Date().getTime() - d.getTime();
                     if (duration >= MAX_DURATION) {
                         // Sensor not send msg during 5 seconds
                         this.removeSensor(roomID, sensorID);
                     }
+                    roomEmpty = false;
                 }
+            }
+//            System.out.println("Coucou : " + this.roomSensorsArray[roomID]);
+//            System.out.println("roomEmpty : " + roomEmpty);
+
+            if (this.roomSensorsArray[roomID] != null && roomEmpty) {
+                this.removeRoom(roomID);
             }
         }
     }
 
+    private void removeRoom(int roomID) {
+        // remove mean tab
+        CustomJPanel jp = this.meanTab[roomID];
+        this.roomSensorsArray [roomID].remove(jp);
+        this.meanTab[roomID] = null;
+
+        // remove room tabpanne
+        frame1.remove(this.roomSensorsArray[roomID]);
+        this.roomSensorsArray[roomID] = null;
+
+        // repain gui
+        frame1.repaint();
+    }
+
     private void removeSensor(int roomID, int sensorID) {
         this.roomSensorsArray [roomID].remove(this.sensorArray[roomID][sensorID]);
+        this.sensorLastMsg[roomID][sensorID] = null;
         this.sensorArray[roomID][sensorID] = null;
     }
 
     public void scheduleUpdateGUI() {
-        int interval = 1000;  // iterate every sec.
+        int interval = 200;  // iterate every sec.
         java.util.Timer timer = new Timer();
 
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 updateGUI();
             }
-        }, 10, interval);
+        }, 0, interval);
     }
 }
