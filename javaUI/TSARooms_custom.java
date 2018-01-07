@@ -9,14 +9,12 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class TSARooms_custom extends JFrame {
-    public static int INITIAL_ROOM_NUMBER = 10;
-    public static int INITIAL_SENSOR_BY_ROOM_NUMBER = 10;
+    private static int INITIAL_ROOM_NUMBER = 10;
+    private static int INITIAL_SENSOR_BY_ROOM_NUMBER = 10;
 
-    // Parents container
-    private JScrollPane scrollPane1;
     private JPanel frame1;
     // Array of JTabbedPane which is the rooms container
-    public JTabbedPane[] roomSensorsArray;
+    private JTabbedPane[] roomSensorsArray;
     // Array of JPane = sensor. sensorArray[1][2] sensor 2 of room 1
     public CustomJPanel[][] sensorArray;
     // Store last date of send msg of sensor
@@ -29,7 +27,7 @@ public class TSARooms_custom extends JFrame {
      * METHOD IMPLEMENTATION
      **************************/
 
-    public TSARooms_custom() {
+    TSARooms_custom() {
         this.meanTab = new CustomJPanel[INITIAL_ROOM_NUMBER];
         this.sensorArray = new CustomJPanel[INITIAL_ROOM_NUMBER][INITIAL_SENSOR_BY_ROOM_NUMBER];
         this.roomSensorsArray = new JTabbedPane[INITIAL_ROOM_NUMBER];
@@ -41,7 +39,7 @@ public class TSARooms_custom extends JFrame {
      * True if c is in the main window
      * @param sensorID index of sensor inside sensorArray sublist
      * @param roomID index of room inside roomSensorsArray
-     * @return
+     * @return boolean
      */
     public boolean isSensorInsideRoom(int sensorID, int roomID) throws InvalideRoomException {
         CustomJPanel sensor;
@@ -77,7 +75,7 @@ public class TSARooms_custom extends JFrame {
     /**
      * Make empty tabbedPane with own template feature
      * @param roomNb use in title of JTabbedPane
-     * @return
+     * @return JTabbedPane
      */
     private JTabbedPane createEmptyTabbedPane(int roomNb) {
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -115,7 +113,7 @@ public class TSARooms_custom extends JFrame {
     }
 
     private void initComponents() {
-        scrollPane1 = new JScrollPane();
+        JScrollPane scrollPane1 = new JScrollPane();
         frame1 = new JPanel();
 
         //======== this ========
@@ -138,11 +136,9 @@ public class TSARooms_custom extends JFrame {
                         new TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0), "JFormDesigner Evaluation",
                                 TitledBorder.CENTER, TitledBorder.BOTTOM, new Font("Dialog", Font.BOLD, 12), Color.red),
                         frame1.getBorder()));
-                frame1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-                    public void propertyChange(java.beans.PropertyChangeEvent e) {
-                        if ("border".equals(e.getPropertyName()))
-                            throw new RuntimeException();
-                    }
+                frame1.addPropertyChangeListener(e -> {
+                    if ("border".equals(e.getPropertyName()))
+                        throw new RuntimeException();
                 });
 
                 frame1.setLayout(new GridLayout(3, 0));
@@ -160,50 +156,6 @@ public class TSARooms_custom extends JFrame {
         pack();
         setLocationRelativeTo(getOwner());
     }
-
-    public void doMeanRoom(int roomID) {
-        float temp = 0, humid = 0, bright = 0;
-        int tempCpt = 0, humidCpt = 0, brightCpt = 0;
-
-        for (int i = 0; i < INITIAL_SENSOR_BY_ROOM_NUMBER; i++) {
-            CustomJPanel cj = this.sensorArray[roomID][i];
-            // Temp
-            try {
-                if (cj.getTempValue() > -99) {
-                    temp += cj.getTempValue();
-                    tempCpt++;
-                }
-            } catch (NumberFormatException ex) {
-                // Not a float
-            }
-
-            // Humid
-            try {
-                if (cj.getHumidValue() > -99) {
-                    humid += cj.getHumidValue();
-                    humidCpt++;
-                }
-            } catch (NumberFormatException ex) {
-                // Not a float
-            }
-
-            // Bright
-            try {
-                if (cj.getBrightValue() > -99) {
-                    bright += cj.getBrightValue();
-                    brightCpt++;
-                }
-            } catch (NumberFormatException ex) {
-                // Not a float
-            }
-        }
-
-        // Set value into mean tab
-        meanTab[roomID].setTempBind(temp / tempCpt);
-        meanTab[roomID].setHumidBind(humid / humidCpt);
-        meanTab[roomID].setBrightBind(bright / brightCpt);
-    }
-
     private void updateGUI () {
         boolean roomEmpty = true;
         for (int roomID = 0; roomID < INITIAL_ROOM_NUMBER; roomID++) {
@@ -219,8 +171,6 @@ public class TSARooms_custom extends JFrame {
                     roomEmpty = false;
                 }
             }
-//            System.out.println("Coucou : " + this.roomSensorsArray[roomID]);
-//            System.out.println("roomEmpty : " + roomEmpty);
 
             if (this.roomSensorsArray[roomID] != null && roomEmpty) {
                 this.removeRoom(roomID);

@@ -5,42 +5,20 @@ import net.tinyos.packet.BuildSource;
 import net.tinyos.packet.PhoenixSource;
 import net.tinyos.util.PrintStreamMessenger;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Date;
 
 public class TinySmartAutomation implements MessageListener {
 
-    private MoteIF moteIF;
     private TSARooms_custom tsaCustom;
     private boolean GUIStarted = false;
 
     public TinySmartAutomation(MoteIF moteIF) {
-        this.moteIF = moteIF;
-        this.moteIF.registerListener(new TinySmartAutomationMsg(), this);
+        moteIF.registerListener(new TinySmartAutomationMsg(), this);
     }
 
-    public void sendPackets() {
-        short roomID = 0;
-        TinySmartAutomationMsg payload = new TinySmartAutomationMsg();
 
-        try {
-            while (true) {
-                System.out.println("Sending packet " + roomID);
-                payload.set_roomID(roomID);
-                moteIF.send(0, payload);
-                roomID++;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException exception) {
-                }
-            }
-        } catch (IOException exception) {
-            System.err.println("Exception thrown when sending packets. Exiting.");
-            System.err.println(exception);
-        }
-    }
 
     /**
      * Convert long to float using binary represenation
@@ -49,7 +27,7 @@ public class TinySmartAutomation implements MessageListener {
      * @param  source x long to convert to float
      * @return float nomber corresponding to source bytes
      */
-    public float convertLongtoFloatBinary(long source) {
+    private float convertLongtoFloatBinary(long source) {
 
         ByteBuffer buffer = ByteBuffer.allocate(8);
         buffer.putLong(source);
@@ -161,7 +139,7 @@ public class TinySmartAutomation implements MessageListener {
 
     }
 
-    public void initWindow() {
+    private void initWindow() {
         tsaCustom = new TSARooms_custom();
         tsaCustom.setVisible(true);
         this.GUIStarted = true;
