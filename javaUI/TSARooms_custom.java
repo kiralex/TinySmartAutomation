@@ -133,7 +133,7 @@ public class TSARooms_custom extends JFrame {
 
                 // JFormDesigner evaluation mark
                 frame1.setBorder(new javax.swing.border.CompoundBorder(
-                        new TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0), "JFormDesigner Evaluation",
+                        new TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0), "A. DERNIAME & S. POIRIER",
                                 TitledBorder.CENTER, TitledBorder.BOTTOM, new Font("Dialog", Font.BOLD, 12), Color.red),
                         frame1.getBorder()));
                 frame1.addPropertyChangeListener(e -> {
