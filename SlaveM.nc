@@ -72,7 +72,8 @@ implementation {
           memcpy(&rcmSend->temperature, &temperature, sizeof(nx_uint32_t));
           memcpy(&rcmSend->voltage, &voltage, sizeof(nx_uint32_t));
 
-          if (call RadioAMSend.send(AM_BROADCAST_ADDR, &packetRadio, sizeof(radio_msg_t)) == SUCCESS) {
+            // 1 to send just to base station
+          if (call RadioAMSend.send(1, &packetRadio, sizeof(radio_msg_t)) == SUCCESS) {
               lockedRadio = TRUE;
               return 0;
           }else
@@ -158,33 +159,6 @@ implementation {
 
   event message_t* RadioReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
     if (enabled) {
-        float humidityL = -1;
-        float temperatureL = -1;
-        float brightnessL = -1;
-        float voltageL = -1;
-        uint8_t roomIDL = -1;
-        uint8_t sensorIDL = -1;
-
-
-        if (len != sizeof(radio_msg_t))
-          return bufPtr;
-
-        rcmRadioReceived = (radio_msg_t*)payload;
-        memcpy(&humidityL, &rcmRadioReceived->humidity, sizeof(nx_uint32_t));
-        memcpy(&temperatureL, &rcmRadioReceived->temperature, sizeof(nx_uint32_t));
-        memcpy(&brightnessL, &rcmRadioReceived->brightness, sizeof(nx_uint32_t));
-        memcpy(&voltageL, &rcmRadioReceived->voltage, sizeof(nx_uint32_t));
-        memcpy(&roomIDL, &rcmRadioReceived->roomID, sizeof(nx_uint8_t));
-        memcpy(&sensorIDL, &rcmRadioReceived->sensorID, sizeof(nx_uint8_t));
-
-        printf("Sensor ID : %d\n", sensorIDL);
-        printf("Room ID : %d\n", roomIDL);
-        printfMessagePlusFloat("Humidity (%%) : ", humidityL);
-        printfMessagePlusFloat("Temperature (Celcius) : ", temperatureL);
-        printfMessagePlusFloat("Brightness (Lux) : ", brightnessL);
-        printfMessagePlusFloat("voltage (V) : ", voltageL);
-
-        printf("----------------------------------\n\n");
     }
 
     return bufPtr;
