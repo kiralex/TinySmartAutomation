@@ -33,6 +33,7 @@ public class TSARooms_custom extends JFrame {
         this.roomSensorsArray = new JTabbedPane[INITIAL_ROOM_NUMBER];
         this.sensorLastMsg = new Date[INITIAL_ROOM_NUMBER][INITIAL_SENSOR_BY_ROOM_NUMBER];
         initComponents();
+        this.validate();
     }
 
     /**
@@ -77,11 +78,14 @@ public class TSARooms_custom extends JFrame {
      * @param roomNb use in title of JTabbedPane
      * @return JTabbedPane
      */
-    private JTabbedPane createEmptyTabbedPane(int roomNb) {
+    private static JTabbedPane createEmptyTabbedPane(int roomNb) {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setBorder(new TitledBorder("Pi\u00e8ce " + roomNb));
         tabbedPane.setMinimumSize(new Dimension(150, 153));
+        tabbedPane.setSize(new Dimension(250, 200));
+        tabbedPane.setPreferredSize(new Dimension(250, 200));
 
+        tabbedPane.validate();
         return tabbedPane;
     }
 
@@ -117,7 +121,7 @@ public class TSARooms_custom extends JFrame {
         frame1 = new JPanel();
 
         //======== this ========
-        setTitle("Mes pi\u00e8ces");
+        setTitle("TinySmartAutomation");
         setMinimumSize(new Dimension(250, 400));
         Container contentPane = getContentPane();
 
@@ -162,13 +166,14 @@ public class TSARooms_custom extends JFrame {
             for (int sensorID = 0; sensorID < INITIAL_SENSOR_BY_ROOM_NUMBER; sensorID++) {
                 Date d = this.sensorLastMsg[roomID][sensorID];
                 if (d != null) {
-                    long MAX_DURATION = MILLISECONDS.convert(1, SECONDS);
+                    roomEmpty = false;
+                    long MAX_DURATION = MILLISECONDS.convert(2, SECONDS);
                     long duration = new Date().getTime() - d.getTime();
                     if (duration >= MAX_DURATION) {
-                        // Sensor not send msg during 5 seconds
+                        // Sensor not send msg during 2 seconds
                         this.removeSensor(roomID, sensorID);
+                        roomEmpty = true;
                     }
-                    roomEmpty = false;
                 }
             }
 
@@ -199,7 +204,7 @@ public class TSARooms_custom extends JFrame {
     }
 
     public void scheduleUpdateGUI() {
-        int interval = 200;  // iterate every sec.
+        int interval = 200;  // iterate every 200 millisec.
         java.util.Timer timer = new Timer();
 
         timer.scheduleAtFixedRate(new TimerTask() {
