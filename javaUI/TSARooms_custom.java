@@ -105,14 +105,20 @@ public class TSARooms_custom extends JFrame {
         if (isRoomInsideFrame(roomID)) {
             System.err.println("L'application contient déjà la pièce N° " + roomID);
         } else {
-            // Add new room to array
-            this.roomSensorsArray[roomID] = createEmptyTabbedPane(roomID);
-            // Make mean tab link to room
-            this.meanTab[roomID] = new CustomJPanel();
-            // Add tab to room
-            this.roomSensorsArray[roomID].addTab("Moyenne", meanTab[roomID]);
-            // Add room to the GUI
-            frame1.add(this.roomSensorsArray[roomID]);
+            try {
+                // Add new room to array
+                this.roomSensorsArray[roomID] = createEmptyTabbedPane(roomID);
+                // Make mean tab link to room
+                this.meanTab[roomID] = new CustomJPanel();
+                // Add tab to room
+                this.roomSensorsArray[roomID].addTab("Moyenne", meanTab[roomID]);
+                // Add room to the GUI
+                frame1.add(this.roomSensorsArray[roomID]);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                ;
+                System.out.println("ça a planter!");
+            }
         }
     }
 
@@ -160,7 +166,8 @@ public class TSARooms_custom extends JFrame {
         pack();
         setLocationRelativeTo(getOwner());
     }
-    private void updateGUI () {
+
+    private void updateGUI() {
         boolean roomEmpty = true;
         for (int roomID = 0; roomID < INITIAL_ROOM_NUMBER; roomID++) {
             for (int sensorID = 0; sensorID < INITIAL_SENSOR_BY_ROOM_NUMBER; sensorID++) {
@@ -186,7 +193,7 @@ public class TSARooms_custom extends JFrame {
     private void removeRoom(int roomID) {
         // remove mean tab
         CustomJPanel jp = this.meanTab[roomID];
-        this.roomSensorsArray [roomID].remove(jp);
+        this.roomSensorsArray[roomID].remove(jp);
         this.meanTab[roomID] = null;
 
         // remove room tabpanne
@@ -198,13 +205,13 @@ public class TSARooms_custom extends JFrame {
     }
 
     private void removeSensor(int roomID, int sensorID) {
-        this.roomSensorsArray [roomID].remove(this.sensorArray[roomID][sensorID]);
+        this.roomSensorsArray[roomID].remove(this.sensorArray[roomID][sensorID]);
         this.sensorLastMsg[roomID][sensorID] = null;
         this.sensorArray[roomID][sensorID] = null;
     }
 
     public void scheduleUpdateGUI() {
-        int interval = 200;  // iterate every 200 millisec.
+        int interval = 200; // iterate every 200 millisec.
         java.util.Timer timer = new Timer();
 
         timer.scheduleAtFixedRate(new TimerTask() {
