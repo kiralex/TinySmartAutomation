@@ -145,7 +145,7 @@ public class TSARooms_custom extends JFrame {
                         throw new RuntimeException();
                 });
 
-                frame1.setLayout(new GridLayout(3, 0));
+                frame1.setLayout(new GridLayout(10, 0));
 
             }
             scrollPane1.setViewportView(frame1);
