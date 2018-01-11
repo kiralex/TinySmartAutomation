@@ -209,7 +209,7 @@ public class TSARooms_custom extends JFrame {
 
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
-                updateGUI();
+                updateGUI(); // supprime un capteur/ une pièce de l'interface si nécéssaire
             }
         }, 0, interval);
     }
