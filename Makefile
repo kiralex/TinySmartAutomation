@@ -12,7 +12,7 @@ javaUI/TinySmartAutomation.class: $(wildcard javaUI/*.java) javaUI/TinySmartAuto
 # radio Channel emission
 CC2420_CHANNEL=16
 # manage radio power emission
-CFlags = -DCC2420_DEF_RFPower= 3 -Wall
+CFlags = -DCC2420_DEF_RFPower= 31 -Wall
 TINYOS_ROOT_DIR?=../..
 
 BUILT_SOURCES = utils.c utils.h

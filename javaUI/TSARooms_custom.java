@@ -115,9 +115,9 @@ public class TSARooms_custom extends JFrame {
                 // Add room to the GUI
                 frame1.add(this.roomSensorsArray[roomID]);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
-                ;
-                System.out.println("ça a planter!");
+//                System.out.println(e.getMessage());
+//                ;
+//                System.out.println("ça a planter!");
             }
         }
     }
