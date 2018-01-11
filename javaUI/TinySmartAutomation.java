@@ -142,6 +142,11 @@ public class TinySmartAutomation implements MessageListener {
     private void initWindow() {
         tsaCustom = new TSARooms_custom();
         tsaCustom.setVisible(true);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+//            e.printStackTrace();
+        }
         this.GUIStarted = true;
 
         tsaCustom.scheduleUpdateGUI();
