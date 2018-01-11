@@ -72,7 +72,7 @@ implementation {
           memcpy(&rcmSend->temperature, &temperature, sizeof(nx_uint32_t));
           memcpy(&rcmSend->voltage, &voltage, sizeof(nx_uint32_t));
 
-          if (call RadioAMSend.send(AM_BROADCAST_ADDR, &packetRadio, sizeof(radio_msg_t)) == SUCCESS) {
+          if (call RadioAMSend.send(1, &packetRadio, sizeof(radio_msg_t)) == SUCCESS) {
               lockedRadio = TRUE;
               return 0;
           }else
