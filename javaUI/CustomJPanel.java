@@ -26,6 +26,7 @@ public class CustomJPanel extends JPanel {
 
     public CustomJPanel() {
         this.initComponents();
+        this.validate();
 
         // to have 2 decimal
         df = new DecimalFormat();
@@ -51,6 +52,8 @@ public class CustomJPanel extends JPanel {
         //======== current panel ========
         {
             this.setMinimumSize(new Dimension(150, 102));
+            this.setSize(new Dimension(200, 110));
+            this.setPreferredSize(new Dimension(200, 110));
             //---- tempLabel ----
             tempLabel.setText("Temp\u00e9rature");
 
@@ -108,6 +111,15 @@ public class CustomJPanel extends JPanel {
             );
             panelLayout.linkSize(SwingConstants.VERTICAL, new Component[] {humidBind, humidLabel, brightLabel, tempLabel, brightBind, tempBind});
         }
+
+        // to have a valide object (good location, ...)
+        tempLabel.validate();
+        humidLabel.validate();
+        brightLabel.validate();
+
+        tempBind.validate();
+        humidBind.validate();
+        brightBind.validate();
     }
 
     /**
